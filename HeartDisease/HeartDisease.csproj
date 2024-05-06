@@ -21,12 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HeartDisease_DataAccess\HeartDisease.DataAccess.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ViewModels\" />
-    <Folder Include="Services\" />
+    <ProjectReference Include="..\HeartDisease.DataAccess\HeartDisease.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>
