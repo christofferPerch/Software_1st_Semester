@@ -12,7 +12,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();  
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -25,7 +25,6 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -34,6 +33,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.MapControllerRoute(
@@ -41,32 +41,34 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
-using (var scope = app.Services.CreateScope())
+await EnsureRolesAsync(app);
+await EnsureUsersAsync(app);
+
+app.Run();
+
+async Task EnsureRolesAsync(WebApplication app)
 {
-    var roleManager= scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var roles = new[] { "Admin", "User"};
+    using var scope = app.Services.CreateScope();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var roles = new[] { "Admin", "User" };
     foreach (var role in roles)
     {
         if (!await roleManager.RoleExistsAsync(role))
-            await roleManager.CreateAsync(new IdentityRole(role)); 
+            await roleManager.CreateAsync(new IdentityRole(role));
     }
 }
 
-using (var scope = app.Services.CreateScope())
+async Task EnsureUsersAsync(WebApplication app)
 {
+    using var scope = app.Services.CreateScope();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
     string email = "admin@admin.com";
     string password = "Admin.123";
-    if (await userManager.FindByEmailAsync(email) == null)
+    var user = await userManager.FindByEmailAsync(email);
+    if (user == null)
     {
-        var user = new IdentityUser();
-        user.UserName = email;
-        user.Email = email;
-        
-        await userManager.CreateAsync(user,password);
-
+        user = new IdentityUser { UserName = email, Email = email };
+        await userManager.CreateAsync(user, password);
         await userManager.AddToRoleAsync(user, "Admin");
     }
 }
-
-app.Run();

@@ -1,0 +1,20 @@
+﻿body {
+    background-color: #f8f9fa; 
+}
+
+.container {
+    padding-top: 40px;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+}
+
+.btn-primary {
+    background-color: #0056b3;
+    border: none;
+}
+
+.card {
+    border-radius: 15px;
+}

@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HeartDisease.Controllers
 {
+    [Authorize]
     public class HeartDiseaseController : Controller
     {
         private readonly ILogger<HeartDiseaseController> _logger;

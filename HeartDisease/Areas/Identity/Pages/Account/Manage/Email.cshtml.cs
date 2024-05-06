@@ -115,26 +115,36 @@ namespace HeartDisease.Areas.Identity.Pages.Account.Manage
             var email = await _userManager.GetEmailAsync(user);
             if (Input.NewEmail != email)
             {
-                var userId = await _userManager.GetUserIdAsync(user);
-                var code = await _userManager.GenerateChangeEmailTokenAsync(user, Input.NewEmail);
-                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                var callbackUrl = Url.Page(
-                    "/Account/ConfirmEmailChange",
-                    pageHandler: null,
-                    values: new { area = "Identity", userId = userId, email = Input.NewEmail, code = code },
-                    protocol: Request.Scheme);
-                await _emailSender.SendEmailAsync(
-                    Input.NewEmail,
-                    "Confirm your email",
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                var setEmailResult = await _userManager.SetEmailAsync(user, Input.NewEmail);
+                if (!setEmailResult.Succeeded)
+                {
+                    StatusMessage = "Unexpected error when trying to set email.";
+                    return RedirectToPage();
+                }
 
-                StatusMessage = "Confirmation link to change email sent. Please check your email.";
+                var setUserName = await _userManager.SetUserNameAsync(user, Input.NewEmail);
+                if (!setUserName.Succeeded)
+                {
+                    StatusMessage = "Unexpected error when trying to set username.";
+                    return RedirectToPage();
+                }
+
+                var setNormalizedEmailResult = await _userManager.SetEmailAsync(user, Input.NewEmail);            
+                if (!setNormalizedEmailResult.Succeeded)
+                {
+                    StatusMessage = "Unexpected error when trying to set normalized email.";
+                    return RedirectToPage();
+                }
+
+                await _signInManager.RefreshSignInAsync(user);
+                StatusMessage = "Your email has been updated.";
                 return RedirectToPage();
             }
 
             StatusMessage = "Your email is unchanged.";
             return RedirectToPage();
         }
+
 
         public async Task<IActionResult> OnPostSendVerificationEmailAsync()
         {

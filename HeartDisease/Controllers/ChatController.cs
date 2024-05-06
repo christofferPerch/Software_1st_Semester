@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HeartDisease.Controllers
 {
+    [Authorize]
     public class ChatController : Controller
     {
         private readonly ILogger<ChatController> _logger;

@@ -8,15 +8,31 @@ html {
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
 body {
-  margin-bottom: 60px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin-bottom: 60px;
+    background: #f0f2f5;
+    color: #333;
+}
+
+.navbar {
+    background-color: #fff; 
+    border-bottom: 2px solid #e3e6f0;
+}
+
+.nav-link {
+    color: #0056b3; 
+}
+
+    .nav-link:hover {
+        color: #004085;
+    }
+
+.footer {
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
 }
