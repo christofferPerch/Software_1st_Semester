@@ -22,6 +22,8 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="code\data_exploration.py" />
+    <Compile Include="code\data_transformation.py" />
     <Compile Include="HeartDisease.Python.py" />
   </ItemGroup>
   <ItemGroup>
@@ -34,6 +36,20 @@
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
       <Architecture>X64</Architecture>
     </Interpreter>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="data\" />
+    <Folder Include="code\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="data\heart_2022_cleaned_removed_outliers.csv" />
+    <Content Include="data\heart_2022_cleaned_with_outliers.csv" />
+    <Content Include="data\heart_2022_removed_columns.csv" />
+    <Content Include="data\heart_2022_transformed_no_outliers.csv" />
+    <Content Include="data\heart_2022_transformed_no_outliershafla.csv" />
+    <Content Include="data\heart_2022_transformed_with_outliers.csv" />
+    <Content Include="data\heart_2022_with_nans.csv" />
+    <Content Include="requirements.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
