@@ -2,21 +2,17 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace HeartDisease.Areas.Identity.Pages.Account.Manage
-{
-    public class EmailModel : PageModel
-    {
+namespace HeartDisease.Areas.Identity.Pages.Account.Manage {
+    public class EmailModel : PageModel {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IEmailSender _emailSender;
@@ -24,8 +20,7 @@ namespace HeartDisease.Areas.Identity.Pages.Account.Manage
         public EmailModel(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
-            IEmailSender emailSender)
-        {
+            IEmailSender emailSender) {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
@@ -61,8 +56,7 @@ namespace HeartDisease.Areas.Identity.Pages.Account.Manage
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
-        public class InputModel
-        {
+        public class InputModel {
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -73,24 +67,20 @@ namespace HeartDisease.Areas.Identity.Pages.Account.Manage
             public string NewEmail { get; set; }
         }
 
-        private async Task LoadAsync(IdentityUser user)
-        {
+        private async Task LoadAsync(IdentityUser user) {
             var email = await _userManager.GetEmailAsync(user);
             Email = email;
 
-            Input = new InputModel
-            {
+            Input = new InputModel {
                 NewEmail = email,
             };
 
             IsEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
         }
 
-        public async Task<IActionResult> OnGetAsync()
-        {
+        public async Task<IActionResult> OnGetAsync() {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
+            if (user == null) {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
@@ -98,40 +88,33 @@ namespace HeartDisease.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
-        public async Task<IActionResult> OnPostChangeEmailAsync()
-        {
+        public async Task<IActionResult> OnPostChangeEmailAsync() {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
+            if (user == null) {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            if (!ModelState.IsValid)
-            {
+            if (!ModelState.IsValid) {
                 await LoadAsync(user);
                 return Page();
             }
 
             var email = await _userManager.GetEmailAsync(user);
-            if (Input.NewEmail != email)
-            {
+            if (Input.NewEmail != email) {
                 var setEmailResult = await _userManager.SetEmailAsync(user, Input.NewEmail);
-                if (!setEmailResult.Succeeded)
-                {
+                if (!setEmailResult.Succeeded) {
                     StatusMessage = "Unexpected error when trying to set email.";
                     return RedirectToPage();
                 }
 
                 var setUserName = await _userManager.SetUserNameAsync(user, Input.NewEmail);
-                if (!setUserName.Succeeded)
-                {
+                if (!setUserName.Succeeded) {
                     StatusMessage = "Unexpected error when trying to set username.";
                     return RedirectToPage();
                 }
 
-                var setNormalizedEmailResult = await _userManager.SetEmailAsync(user, Input.NewEmail);            
-                if (!setNormalizedEmailResult.Succeeded)
-                {
+                var setNormalizedEmailResult = await _userManager.SetEmailAsync(user, Input.NewEmail);
+                if (!setNormalizedEmailResult.Succeeded) {
                     StatusMessage = "Unexpected error when trying to set normalized email.";
                     return RedirectToPage();
                 }
@@ -146,16 +129,13 @@ namespace HeartDisease.Areas.Identity.Pages.Account.Manage
         }
 
 
-        public async Task<IActionResult> OnPostSendVerificationEmailAsync()
-        {
+        public async Task<IActionResult> OnPostSendVerificationEmailAsync() {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
+            if (user == null) {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            if (!ModelState.IsValid)
-            {
+            if (!ModelState.IsValid) {
                 await LoadAsync(user);
                 return Page();
             }

@@ -1,13 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace HeartDisease.Data
-{
-    public class ApplicationDbContext : IdentityDbContext
-    {
+namespace HeartDisease.Data {
+    public class ApplicationDbContext : IdentityDbContext {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
+            : base(options) {
         }
     }
 }

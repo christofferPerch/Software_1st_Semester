@@ -18,12 +18,9 @@ builder.Services.AddControllersWithViews();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+if (app.Environment.IsDevelopment()) {
     app.UseMigrationsEndPoint();
-}
-else
-{
+} else {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
@@ -33,7 +30,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
@@ -46,27 +43,23 @@ await EnsureUsersAsync(app);
 
 app.Run();
 
-async Task EnsureRolesAsync(WebApplication app)
-{
+async Task EnsureRolesAsync(WebApplication app) {
     using var scope = app.Services.CreateScope();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var roles = new[] { "Admin", "User" };
-    foreach (var role in roles)
-    {
+    foreach (var role in roles) {
         if (!await roleManager.RoleExistsAsync(role))
             await roleManager.CreateAsync(new IdentityRole(role));
     }
 }
 
-async Task EnsureUsersAsync(WebApplication app)
-{
+async Task EnsureUsersAsync(WebApplication app) {
     using var scope = app.Services.CreateScope();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
     string email = "admin@admin.com";
     string password = "Admin.123";
     var user = await userManager.FindByEmailAsync(email);
-    if (user == null)
-    {
+    if (user == null) {
         user = new IdentityUser { UserName = email, Email = email };
         await userManager.CreateAsync(user, password);
         await userManager.AddToRoleAsync(user, "Admin");

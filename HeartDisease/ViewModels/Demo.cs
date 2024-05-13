@@ -1,6 +1,4 @@
-﻿namespace HeartDisease.ViewModels
-{
-    public class Demo
-    {
+﻿namespace HeartDisease.ViewModels {
+    public class Demo {
     }
 }

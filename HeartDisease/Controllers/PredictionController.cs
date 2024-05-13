@@ -1,20 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HeartDisease.Controllers
-{
+namespace HeartDisease.Controllers {
     [Authorize]
-    public class PredictionController : Controller
-    {
+    public class PredictionController : Controller {
         private readonly ILogger<PredictionController> _logger;
 
-        public PredictionController(ILogger<PredictionController> logger)
-        {
+        public PredictionController(ILogger<PredictionController> logger) {
             _logger = logger;
         }
 
-        public IActionResult Index()
-        {
+        public IActionResult Index() {
             return View();
         }
     }

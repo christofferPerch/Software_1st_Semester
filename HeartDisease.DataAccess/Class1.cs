@@ -1,7 +1,5 @@
-﻿namespace HeartDisease.DataAccess
-{
-    public class Class1
-    {
+﻿namespace HeartDisease.DataAccess {
+    public class Class1 {
 
     }
 }

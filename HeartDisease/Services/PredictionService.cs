@@ -1,6 +1,4 @@
-﻿namespace HeartDisease.Services
-{
-    public class PredictionService
-    {
+﻿namespace HeartDisease.Services {
+    public class PredictionService {
     }
 }
