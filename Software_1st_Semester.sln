@@ -5,9 +5,7 @@ VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeartDisease", "HeartDisease\HeartDisease.csproj", "{DA70F764-913C-4AB1-943F-B4EC7AE6A74B}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "HeartDisease.Python", "HeartDisease.Python\HeartDisease.Python.pyproj", "{0645DC5F-45E1-4790-83C2-DF806DC67881}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeartDisease.DataAccess", "HeartDisease.DataAccess\HeartDisease.DataAccess.csproj", "{9D95AC61-D875-40C6-9515-A2DEDC14B428}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeartDisease.DataAccess", "HeartDisease.DataAccess\HeartDisease.DataAccess.csproj", "{9D95AC61-D875-40C6-9515-A2DEDC14B428}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,8 +17,6 @@ Global
 		{DA70F764-913C-4AB1-943F-B4EC7AE6A74B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA70F764-913C-4AB1-943F-B4EC7AE6A74B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA70F764-913C-4AB1-943F-B4EC7AE6A74B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0645DC5F-45E1-4790-83C2-DF806DC67881}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0645DC5F-45E1-4790-83C2-DF806DC67881}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D95AC61-D875-40C6-9515-A2DEDC14B428}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9D95AC61-D875-40C6-9515-A2DEDC14B428}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D95AC61-D875-40C6-9515-A2DEDC14B428}.Release|Any CPU.ActiveCfg = Release|Any CPU
