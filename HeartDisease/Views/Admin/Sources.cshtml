@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "Sources";
+}
+
+@Html.Partial("_AdminNavBar")
+
+<h2>Sources</h2>
+
+<form asp-controller="Admin" asp-action="Upload" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="file">Upload File:</label>
+        <input type="file" name="file" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>

@@ -13,5 +13,26 @@ namespace HeartDisease.Controllers {
         public IActionResult Index() {
             return View();
         }
+
+        public IActionResult Sources()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Upload(IFormFile file)
+        {
+            if (file != null && file.Length > 0)
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", file.FileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+            }
+
+            return RedirectToAction("Sources");
+        }
+
     }
 }
