@@ -6,7 +6,6 @@
 
 <div class="container">
     <div class="row justify-content-center">
-        <!-- Column for the chat panel -->
         <div class="col-md-8" style="margin-top: 100px;">
             <div class="chat-container">
                 <div class="chat-header">
@@ -16,7 +15,11 @@
                     </button>
                 </div>
                 <div class="chat-body" id="chatBody">
-                    <!-- Chat messages will appear here -->
+                    <div class="chat-message bot-message">
+                        <div class="message-background message-background-received">
+                            Hello, I'm your digital heart health specialist. How may I assist you today?
+                        </div>
+                    </div>
                 </div>
                 <div class="chat-input-container">
                     <div class="input-with-send">
@@ -36,8 +39,9 @@
     function sendMessage() {
         var message = $('#chatInput').val().trim();
         if (message) {
-            // Append user message to chat body
-            $('#chatBody').append('<div class="chat-message user-message">' + message + '</div>');
+            var userHtml = '<div class="chat-message user-message"><div class="message-background message-background-sent">' + message + '</div></div>';
+            $('#chatBody').append(userHtml);
+            $('#chatInput').val(''); 
 
             $.ajax({
                 url: '@Url.Action("SendMessage", "Chat")',
@@ -45,33 +49,30 @@
                 contentType: 'application/json',
                 data: JSON.stringify({ message: message }),
                 success: function (data) {
-                    console.log(data); // Log the data to see what you are receiving
-                    // Append bot's response to chat body
                     if (data.response) {
-                        $('#chatBody').append('<div class="chat-message bot-message">' + data.response + '</div>');
+                        var botHtml = '<div class="chat-message bot-message"><div class="message-background message-background-received">' + data.response + '</div></div>';
+                        $('#chatBody').append(botHtml);
                     } else {
-                        $('#chatBody').append('<div class="chat-message bot-message">An error occurred while processing your message.</div>');
+                        $('#chatBody').append('<div class="chat-message bot-message"><div class="message-background message-background-received">An error occurred while processing your message.</div></div>');
                     }
-                    $('#chatInput').val(''); // Clear input box
                 },
                 error: function (xhr) {
-                    console.log('Error:', xhr.responseText); // Log more detailed error information
+                    console.log('Error:', xhr.responseText); 
                     alert('Error sending message: ' + xhr.statusText);
                 }
             });
         }
     }
 
+
     function resetChat() {
-        $('#chatBody').html(''); // Clears the chat
+        $('#chatBody').html(''); 
     }
 
     function handleKeyPress(event) {
-        if (event.keyCode === 13) {  // Enter key
-            event.preventDefault(); // Prevent newline
+        if (event.keyCode === 13) {  
+            event.preventDefault(); 
             sendMessage();
         }
     }
 </script>
-
-
