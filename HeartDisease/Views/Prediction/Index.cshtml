@@ -1,166 +1,268 @@
-﻿@{
+﻿@model HeartDisease.Models.PredictionModel
+
+@{
     ViewBag.Title = "Heart Disease Prediction";
 }
 
-<h2>@ViewBag.Title</h2>
+<h2 class="text-center mt-4">@ViewBag.Title</h2>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .form-container {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px 0px #0000001a;
+        margin-top: 30px;
+        max-width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            font-weight: bold;
+            color: #333;
+        }
+
+    .form-control {
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+        box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.1);
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        border-color: #007bff;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px 0px rgba(0,123,255,0.5);
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+    .alert {
+        margin-top: 20px;
+    }
+</style>
+
+<div class="container form-container">
+    <form id="predictionForm">
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            <label for="ModelSelect">Choose a Prediction Model:</label>
+            <select class="form-control" id="ModelSelect" name="SelectedModel.SelectedModel">
+                <option value="predict_lr">Logistic Regression</option>
+                <option value="predict_rf">Random Forest</option>
+                <option value="predict_tf">Tensorflow</option>
+            </select>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="Sex">Sex</label>
+                    <select class="form-control" id="Sex" name="Sex[0]">
+                        <option>Male</option>
+                        <option>Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="GeneralHealth">General Health</label>
+                    <select class="form-control" id="GeneralHealth" name="GeneralHealth[0]">
+                        <option>Fair</option>
+                        <option>Good</option>
+                        <option>Very good</option>
+                        <option>Excellent</option>
+                        <option>Poor</option>                                               
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="PhysicalHealthDays">Physical Health Days</label>
+                    <input type="number" class="form-control" id="PhysicalHealthDays" name="PhysicalHealthDays[0]" min="0" max="30" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="MentalHealthDays">Mental Health Days</label>
+                    <input type="number" class="form-control" id="MentalHealthDays" name="MentalHealthDays[0]" min="0" max="30" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="PhysicalActivities">Physical Activities</label>
+                    <select class="form-control" id="PhysicalActivities" name="PhysicalActivities[0]">
+                        <option>Yes</option>
+                        <option>No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="SleepHours">Sleep Hours</label>
+                    <input type="number" class="form-control" id="SleepHours" name="SleepHours[0]" min="0" max="24" value="8">
+                </div>
+                <div class="form-group">
+                    <label for="HadAsthma">Had Asthma</label>
+                    <select class="form-control" id="HadAsthma" name="HadAsthma[0]">
+                        <option>No</option>
+                        <option>Yes</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="HadDepressiveDisorder">Had Depressive Disorder</label>
+                    <select class="form-control" id="HadDepressiveDisorder" name="HadDepressiveDisorder[0]">
+                        <option>No</option>
+                        <option>Yes</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="HIVTesting">HIV Testing</label>
+                    <select class="form-control" id="HIVTesting" name="HIVTesting[0]">
+                        <option>No</option>
+                        <option>Yes</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="HadKidneyDisease">Had Kidney Disease</label>
+                    <select class="form-control" id="HadKidneyDisease" name="HadKidneyDisease[0]">
+                        <option>No</option>
+                        <option>Yes</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="HadDiabetes">Had Diabetes</label>
+                    <select class="form-control" id="HadDiabetes" name="HadDiabetes[0]">
+                        <option>No</option>
+                        <option>Yes</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="DifficultyWalking">Difficulty Walking</label>
+                    <select class="form-control" id="DifficultyWalking" name="DifficultyWalking[0]">
+                        <option>No</option>
+                        <option>Yes</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="SmokerStatus">Smoker Status</label>
+                    <select class="form-control" id="SmokerStatus" name="SmokerStatus[0]">
+                        <option>Never smoked</option>
+                        <option>Former smoker</option>
+                        <option>Current smoker - now smokes some days</option>
+                        <option>Current smoker - now smokes every day</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ECigaretteUsage">E-Cigarette Usage</label>
+                    <select class="form-control" id="ECigaretteUsage" name="ECigaretteUsage[0]">
+                        <option>Never used e-cigarettes in my entire life</option>
+                        <option>Not at all (right now)</option>
+                        <option>Use them some days</option>
+                        <option>Use them every day</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="RaceEthnicityCategory">Race Category</label>
+                    <select class="form-control" id="RaceEthnicityCategory" name="RaceEthnicityCategory[0]">
+                        <option>White only, Non-Hispanic</option>
+                        <option>Black only, Non-Hispanic</option>
+                        <option>Hispanic</option>
+                        <option>Multiracial, Non-Hispanic</option>
+                        <option>Other race only, Non-Hispanic</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="AgeCategory">Age Category</label>
+                    <select class="form-control" id="AgeCategory" name="AgeCategory[0]">
+                        <option>Age 18 to 24</option>
+                        <option>Age 25 to 29</option>
+                        <option>Age 30 to 34</option>
+                        <option>Age 35 to 39</option>
+                        <option>Age 40 to 44</option>
+                        <option>Age 45 to 49</option>
+                        <option>Age 50 to 54</option>
+                        <option>Age 55 to 59</option>
+                        <option>Age 60 to 64</option>
+                        <option>Age 65 to 69</option>
+                        <option>Age 70 to 74</option>
+                        <option>Age 75 to 79</option>
+                        <option>Age 80 or older</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="BMI">BMI</label>
+                    <input type="number" class="form-control" id="BMI" name="BMI[0]" min="10" max="180" step="0.1" value="25">
+                </div>
+                <div class="form-group">
+                    <label for="AlcoholDrinkers">Alcohol Drinkers</label>
+                    <select class="form-control" id="AlcoholDrinkers" name="AlcoholDrinkers[0]">
+                        <option>No</option>
+                        <option>Yes</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Predict</button>
+    </form>
+
+    <div id="predictionResult" class="mt-3"></div>
+
+    @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+    {
+        <div class="alert alert-danger">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+</div>
 
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<form action="YourActionMethod" method="post" class="p-3">
-    <div class="form-group">
-        <label for="modelSelect">Choose a Prediction Model:</label>
-        <select class="form-control" id="modelSelect" name="modelSelect">
-            <option>Logistic Regression</option>
-            <option>Random Forest</option>
-            <option>Tensorflow</option>
-        </select>
-    </div>
+<script>
+    $(document).ready(function () {
+        $('#predictionForm').submit(function (event) {
+            event.preventDefault();
 
-    <div class="form-group">
-        <label for="Sex">Sex</label>
-        <select class="form-control" id="Sex" name="Sex">
-            <option>Male</option>
-            <option>Female</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="GeneralHealth">General Health</label>
-        <select class="form-control" id="GeneralHealth" name="GeneralHealth">
-            <option>Poor</option>
-            <option>Fair</option>
-            <option>Good</option>
-            <option>Very good</option>
-            <option>Excellent</option>
-        </select>
-    </div>
+            var formData = $(this).serialize();
 
-    <div class="form-group">
-        <label for="PhysicalHealthDays">Physical Health Days</label>
-        <input type="number" class="form-control" id="PhysicalHealthDays" name="PhysicalHealthDays" min="0" max="30">
-    </div>
-    <div class="form-group">
-        <label for="MentalHealthDays">Mental Health Days</label>
-        <input type="number" class="form-control" id="MentalHealthDays" name="MentalHealthDays" min="0" max="30">
-    </div>
+            $.ajax({
+                url: `/Prediction/Predict`,
+                type: 'POST',
+                data: formData,
+                success: function (data) {
+                    if (data.prediction) {
+                        $('#predictionResult').html(`<div class="alert alert-success">${data.prediction}</div>`);
+                    } else if (data.error) {
+                        $('#predictionResult').html(`<div class="alert alert-danger">${data.error}</div>`);
+                    } else {
+                        $('#predictionResult').html(`<div class="alert alert-danger">An unknown error occurred.</div>`);
+                    }
 
-    <div class="form-group">
-        <label for="PhysicalActivities">Physical Activities</label>
-        <select class="form-control" id="PhysicalActivities" name="PhysicalActivities">
-            <option>Yes</option>
-            <option>No</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="SleepHours">Sleep Hours</label>
-        <input type="number" class="form-control" id="SleepHours" name="SleepHours" min="0" max="24">
-    </div>
-    <div class="form-group">
-        <label for="HadAsthma">Had Asthma</label>
-        <select class="form-control" id="HadAsthma" name="HadAsthma">
-            <option>No</option>
-            <option>Yes</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="HadDepressiveDisorder">Had Depressive Disorder</label>
-        <select class="form-control" id="Had Depressive Disorder" name="HadDepressiveDisorder">
-            <option>No</option>
-            <option>Yes</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="HadKidneyDisease">Had Kidney Disease</label>
-        <select class="form-control" id="Had Kidney Disease" name="HadKidneyDisease">
-            <option>No</option>
-            <option>Yes</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="HadDiabetes">Had Diabetes</label>
-        <select class="form-control" id="Had Diabetes" name="HadDiabetes">
-            <option>No</option>
-            <option>Yes</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="DifficultyWalking">Difficulty Walking</label>
-        <select class="form-control" id="Difficulty Walking" name="DifficultyWalking">
-            <option>No</option>
-            <option>Yes</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="SmokerStatus">Smoker Status</label>
-        <select class="form-control" id="SmokerStatus" name="SmokerStatus">
-            <option>Never smoked</option>
-            <option>Former smoker</option>
-            <option>Current smoker - now smokes some days</option>
-            <option>Current smoker - now smokes every day</option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="ECigaretteUsage">E-Cigarette Usage</label>
-        <select class="form-control" id="ECigaretteUsage" name="ECigaretteUsage">
-            <option>Never used e-cigarettes in my entire life</option>
-            <option>Not at all (right now)</option>
-            <option>Use them some days</option>
-            <option>Use them every day</option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="AgeCategory">Age Category</label>
-        <select class="form-control" id="AgeCategory" name="AgeCategory">
-            <option>Age 18 to 24</option>
-            <option>Age 25 to 29</option>
-            <option>Age 30 to 34</option>
-            <option>Age 35 to 39</option>
-            <option>Age 40 to 44</option>
-            <option>Age 45 to 49</option>
-            <option>Age 50 to 54</option>
-            <option>Age 55 to 59</option>
-            <option>Age 60 to 64</option>
-            <option>Age 65 to 69</option>
-            <option>Age 70 to 74</option>
-            <option>Age 75 to 79</option>
-            <option>Age 80 or older</option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="BMI">BMI</label>
-        <input type="number" class="form-control" id="BMI" name="BMI" min="10" max="180">
-    </div>
-    <div class="form-group">
-        <label for="AlcoholDrinkers">Alcohol Drinkers</label>
-        <select class="form-control" id="AlcoholDrinkers" name="AlcoholDrinkers">
-            <option>No</option>
-            <option>Yes</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="HIVTesting">HIV Testing</label>
-        <select class="form-control" id="Hiv Testing" name="HIVTesting">
-            <option>No</option>
-            <option>Yes</option>          
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="RaceCategory">Race Category</label>
-        <select class="form-control" id="RaceCategory" name="RaceCategory">
-            <option>White only, Non-Hispanic</option>
-            <option>Black only, Non-Hispanic</option>
-            <option>Hispanic</option>
-            <option>Multiracial, Non-Hispanic</option>
-            <option>Other race only, Non-Hispanic</option>   
-        </select>
-    </div>
-
-
-    <button type="submit" class="btn btn-primary">Predict</button>
-</form>
-
+                    // Smooth scroll to the result
+                    $('html, body').animate({
+                        scrollTop: $('#predictionResult').offset().top
+                    }, 1000);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $('#predictionResult').html(`<div class="alert alert-danger">An error occurred: ${errorThrown}</div>`);
+                    // Smooth scroll to the result
+                    $('html, body').animate({
+                        scrollTop: $('#predictionResult').offset().top
+                    }, 1000);
+                }
+            });
+        });
+    });
+</script>

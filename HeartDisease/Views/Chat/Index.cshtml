@@ -1,7 +1,5 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Chat with Heart Doctor Bot";
 }
 
 <link rel="stylesheet" href="~/css/chatpanel.css" />
@@ -13,17 +11,17 @@
             <div class="chat-container">
                 <div class="chat-header">
                     <span class="bot-name">Heart Doctor Bot</span>
-                    <button class="chat-reset-btn">
+                    <button class="chat-reset-btn" onclick="resetChat()">
                         <img src="~/images/resetchatbutton.png" alt="Reset" class="reset-icon">
                     </button>
                 </div>
-                <div class="chat-body">
-                    <!-- Chat messages go here -->
+                <div class="chat-body" id="chatBody">
+                    <!-- Chat messages will appear here -->
                 </div>
                 <div class="chat-input-container">
                     <div class="input-with-send">
-                        <input type="text" placeholder="Type a message..." class="chat-input">
-                        <button class="chat-send-btn">
+                        <input type="text" placeholder="Type a message..." id="chatInput" class="chat-input" onkeypress="handleKeyPress(event)">
+                        <button class="chat-send-btn" onclick="sendMessage()">
                             <img src="~/images/sendbutton.png" alt="Send" class="send-icon">
                         </button>
                     </div>
@@ -33,8 +31,47 @@
     </div>
 </div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    function sendMessage() {
+        var message = $('#chatInput').val().trim();
+        if (message) {
+            // Append user message to chat body
+            $('#chatBody').append('<div class="chat-message user-message">' + message + '</div>');
 
+            $.ajax({
+                url: '@Url.Action("SendMessage", "Chat")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ message: message }),
+                success: function (data) {
+                    console.log(data); // Log the data to see what you are receiving
+                    // Append bot's response to chat body
+                    if (data.response) {
+                        $('#chatBody').append('<div class="chat-message bot-message">' + data.response + '</div>');
+                    } else {
+                        $('#chatBody').append('<div class="chat-message bot-message">An error occurred while processing your message.</div>');
+                    }
+                    $('#chatInput').val(''); // Clear input box
+                },
+                error: function (xhr) {
+                    console.log('Error:', xhr.responseText); // Log more detailed error information
+                    alert('Error sending message: ' + xhr.statusText);
+                }
+            });
+        }
+    }
 
+    function resetChat() {
+        $('#chatBody').html(''); // Clears the chat
+    }
 
+    function handleKeyPress(event) {
+        if (event.keyCode === 13) {  // Enter key
+            event.preventDefault(); // Prevent newline
+            sendMessage();
+        }
+    }
+</script>
 
 
