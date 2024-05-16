@@ -10,29 +10,19 @@ namespace HeartDisease.Controllers {
             _logger = logger;
         }
 
-        public IActionResult Index() {
-            return View();
-        }
-
-        public IActionResult Sources()
+        public IActionResult Index()
         {
             return View();
         }
 
-        [HttpPost]
-        public IActionResult Upload(IFormFile file)
+        public IActionResult ChatBot()
         {
-            if (file != null && file.Length > 0)
-            {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", file.FileName);
-                using (var stream = new FileStream(path, FileMode.Create))
-                {
-                    file.CopyTo(stream);
-                }
-            }
-
-            return RedirectToAction("Sources");
+            return View();
         }
 
+        public IActionResult MachineLearningModels()
+        {
+            return View();
+        }
     }
 }

@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Chat Bot";
+}
+
+<div class="container-fluid h-100 d-flex flex-column">
+    <div class="row">
+        <div class="col-12 d-flex justify-content-center align-items-center">
+            <h2>Admin Page</h2>
+        </div>
+    </div>
+    @Html.Partial("~/Views/Shared/Partials/_AdminNavbar.cshtml")
+    <div class="row flex-grow-1 justify-content-center align-items-center">
+        <div class="col-md-9 d-flex justify-content-center align-items-center">
+            <!-- Main content would go here -->
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            @Html.Partial("~/Views/Shared/Partials/_Sidebar.cshtml")
+        </div>
+    </div>
+</div>

@@ -12,8 +12,8 @@
 
         <!-- Main content area -->
         <div class="col-md-9 d-flex justify-content-center align-items-center">
-            <div class="w-100">
-                <div class="container my-5 text-center">
+            <div class="w-100 d-flex justify-content-center align-items-center flex-column">
+                <div class="container text-center">
                     <h2 class="mb-4">Sources</h2>
 
                     <form asp-controller="Admin" asp-action="Upload" method="post" enctype="multipart/form-data" class="mb-4">
@@ -48,10 +48,6 @@
 <style>
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    .container {
-        max-width: 800px;
     }
 
     h2 {
