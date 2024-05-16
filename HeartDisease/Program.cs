@@ -1,4 +1,6 @@
 using HeartDisease.Data;
+using HeartDisease.DataAccess;
+using HeartDisease.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,10 +12,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+builder.Services.AddScoped<IDataAccess, SqlDataAccess>(sp =>
+    new SqlDataAccess(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<PredictionService>();
 
 var app = builder.Build();
 

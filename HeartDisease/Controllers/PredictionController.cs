@@ -1,4 +1,5 @@
 ﻿using HeartDisease.Models;
+using HeartDisease.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -13,11 +14,14 @@ namespace HeartDisease.Controllers
     {
         private readonly ILogger<PredictionController> _logger;
         private readonly HttpClient _httpClient;
+        private readonly PredictionService _predictionService;
 
-        public PredictionController(ILogger<PredictionController> logger)
+        public PredictionController(ILogger<PredictionController> logger,PredictionService predictionService)
         {
             _logger = logger;
             _httpClient = new HttpClient();
+            _predictionService = predictionService;
+
         }
 
         public IActionResult Index(string predictionResult = null)
@@ -93,5 +97,13 @@ namespace HeartDisease.Controllers
                 return Json(new { error = "An error occurred while predicting." });
             }
         }
+
+        [HttpGet]
+        public async Task<ActionResult> getAllParameters()
+        {
+            var predictionParameters = await _predictionService.GetAllPredictionParamters();
+            return Json(predictionParameters);
+        }
+
     }
 }
