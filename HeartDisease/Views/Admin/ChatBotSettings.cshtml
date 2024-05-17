@@ -1,6 +1,10 @@
-﻿@{
+﻿@model HeartDisease.Models.ChatBotSettings
+
+@{
     ViewData["Title"] = "Chat Bot Settings";
 }
+
+<link rel="stylesheet" href="~/css/chatbotsettings.css asp-append-version="true" />
 
 @Html.Partial("_AdminNavBar")
 
@@ -9,68 +13,60 @@
 
     <div class="card shadow-sm p-4 mb-4 border">
         <h4 class="mb-3">Last Trained</h4>
-        <p class="text-muted">The chatbot was last trained on: @DateTime.Now.ToString("MMMM dd, yyyy hh:mm tt")</p>
+        <p class="text-muted">The chatbot was last trained on: </p>
     </div>
 
-    <form asp-controller="Admin" asp-action="SaveChatBotSettings" method="post">
+    <form asp-controller="Admin" asp-action="UpdateChatBotSettings" method="post">
         <div class="card shadow-sm p-4 mb-4 border">
             <div class="form-group mb-3">
-                <label for="initialMessage" class="form-label fw-bold">Initial Message:</label>
-                <input type="text" name="initialMessage" id="initialMessage" class="form-control" placeholder="Enter the initial message" />
+                <label for="InitialMessage" class="form-label fw-bold">Initial Message:</label>
+                <input asp-for="InitialMessage" class="form-control" placeholder="Enter the initial message" />
+                <span asp-validation-for="InitialMessage" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label for="basePrompt" class="form-label fw-bold">Base Prompt:</label>
-                <textarea name="basePrompt" id="basePrompt" class="form-control" rows="3" placeholder="Enter the base prompt"></textarea>
+                <label for="BasePrompt" class="form-label fw-bold">Base Prompt:</label>
+                <textarea asp-for="BasePrompt" class="form-control" rows="3" placeholder="Enter the base prompt"></textarea>
+                <span asp-validation-for="BasePrompt" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label for="model" class="form-label fw-bold">Model:</label>
-                <select name="model" id="model" class="form-select">
-                    <option value="gpt-4">GPT-4</option>
-                    <option value="gpt-3.5">GPT-3.5</option>
+                <label for="GPTModelId" class="form-label fw-bold">Model:</label>
+                <select asp-for="GPTModelId" class="form-select" asp-items="ViewBag.Models">
                 </select>
+                <span asp-validation-for="GPTModelId" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label for="temperature" class="form-label fw-bold">Temperature:</label>
-                <input type="range" name="temperature" id="temperature" class="form-range" min="0" max="1" step="0.1" value="0.7" />
+                <label for="Temperature" class="form-label fw-bold">Temperature:</label>
+                <div class="d-flex align-items-center">
+                    <input asp-for="Temperature" type="range" class="form-range" min="0" max="1" step="0.1" oninput="updateTemperatureValue(this.value)" />
+                    <span id="temperatureValue" class="ms-2">@Model.Temperature</span> 
+                </div>
                 <div class="d-flex justify-content-between">
                     <span>0.0</span>
                     <span>1.0</span>
                 </div>
+                <span asp-validation-for="Temperature" class="text-danger"></span>
             </div>
 
+            <input type="hidden" asp-for="Id" />
             <button type="submit" class="btn btn-primary w-100">Save Settings</button>
         </div>
     </form>
 </div>
 
-<style>
-    /* Custom styles for the Chat Bot Settings page */
-    .knowledge-base-container {
-        max-width: 800px;
-        margin: auto;
-    }
-
-        .knowledge-base-container .card {
-            border: 1px solid #ddd; /* Small border for containers */
-            border-radius: 0.5rem;
+@section Scripts {
+    <script>
+        function updateTemperatureValue(value) {
+            document.getElementById('temperatureValue').textContent = value;
         }
 
-            .knowledge-base-container .card h4 {
-                font-weight: 600;
+        document.addEventListener('DOMContentLoaded', function () {
+            const temperatureInput = document.querySelector('input[type="range"][asp-for="Temperature"]');
+            if (temperatureInput) {
+                updateTemperatureValue(temperatureInput.value);
             }
-
-        .knowledge-base-container .form-label.fw-bold {
-            font-weight: bold;
-        }
-
-        .knowledge-base-container .form-range {
-            margin-top: 1rem;
-        }
-
-            .knowledge-base-container .form-range + .d-flex {
-                margin-top: -0.5rem;
-            }
-</style>
+        });
+    </script>
+}

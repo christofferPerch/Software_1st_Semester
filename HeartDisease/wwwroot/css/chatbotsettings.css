@@ -1,0 +1,25 @@
+﻿.knowledge-base-container {
+    max-width: 800px;
+    margin: auto;
+}
+
+    .knowledge-base-container .card {
+        border: 1px solid #ddd;
+        border-radius: 0.5rem;
+    }
+
+        .knowledge-base-container .card h4 {
+            font-weight: 600;
+        }
+
+    .knowledge-base-container .form-label.fw-bold {
+        font-weight: bold;
+    }
+
+    .knowledge-base-container .form-range {
+        margin-top: 1rem;
+    }
+
+        .knowledge-base-container .form-range + .d-flex {
+            margin-top: -0.5rem;
+        }

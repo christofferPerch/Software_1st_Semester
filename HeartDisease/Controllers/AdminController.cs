@@ -1,8 +1,11 @@
 ﻿using HeartDisease.Services;
+using HeartDisease.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using HeartDisease.Utils;
+using HeartDisease.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HeartDisease.Controllers {
     [Authorize(Roles = "Admin")]
@@ -10,11 +13,14 @@ namespace HeartDisease.Controllers {
 
         private readonly ILogger<AdminController> _logger;
         private readonly KnowledgeBaseService _knowledgeBaseService;
+        private readonly ChatBotService _chatBotService;
 
-        public AdminController(ILogger<AdminController> logger, KnowledgeBaseService knowledgeBaseService)
+
+        public AdminController(ILogger<AdminController> logger, KnowledgeBaseService knowledgeBaseService, ChatBotService chatBotService)
         {
             _logger = logger;
             _knowledgeBaseService = knowledgeBaseService;
+            _chatBotService = chatBotService;
         }
 
         public IActionResult Index() {
@@ -26,10 +32,30 @@ namespace HeartDisease.Controllers {
             var files = await _knowledgeBaseService.GetAllFilesAsync();
             return View(files);
         }
-        public IActionResult ChatBotSettings()
+        public async Task<IActionResult> ChatBotSettings()
         {
-            return View();
+            var settings = await _chatBotService.GetChatBotSettings(1);
+            var models = await _chatBotService.GetAllGPTModels();
+            ViewBag.Models = new SelectList(models, "Id", "ModelName");
+            return View(settings);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateChatBotSettings(ChatBotSettings settings)
+        {
+            if (ModelState.IsValid)
+            {
+                // Ensure the temperature is within the correct range using Math.Clamp for double values
+                settings.Temperature = Math.Clamp(settings.Temperature, 0.0, 1.0);
+
+                await _chatBotService.UpdateChatBotSettings(settings);
+                return RedirectToAction("ChatBotSettings");
+            }
+            var models = await _chatBotService.GetAllGPTModels();
+            ViewBag.Models = new SelectList(models, "Id", "ModelName");
+            return View("ChatBotSettings", settings);
+        }
+
         public IActionResult ChatBotHistory()
         {
             return View();
