@@ -3,6 +3,7 @@ using HeartDisease.DataAccess;
 using HeartDisease.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,14 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddScoped<IDataAccess, SqlDataAccess>(sp =>
     new SqlDataAccess(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.Configure<MongoDbSettings>(
+    builder.Configuration.GetSection("MongoDB"));
+
+builder.Services.AddScoped<IMongoDataAccess, MongoDataAccess>(sp =>
+{
+    var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+    return new MongoDataAccess(settings.ConnectionString, settings.DatabaseName);
+});
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
@@ -22,6 +31,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<PredictionService>();
+
+builder.Services.AddScoped<KnowledgeBaseService>();
 
 var app = builder.Build();
 

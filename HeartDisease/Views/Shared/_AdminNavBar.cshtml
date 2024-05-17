@@ -4,21 +4,36 @@
 
 <link rel="stylesheet" href="~/css/_adminnavbar.css" />
 
-<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white box-shadow mb-3">
+<nav class="navbar navbar-expand-lg navbar-light box-shadow mb-3">
     <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="navbar-collapse collapse justify-content-center">
+
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link text-dark @(currentAction == "Sources" ? "active" : "")" asp-controller="Admin" asp-action="Sources">Chat Bot</a>
+                    <a class="nav-link @(currentAction == "KnowledgeBase" ? "active" : "")" asp-controller="Admin" asp-action="KnowledgeBase">Knowledge Base</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark @(currentAction == "Test" ? "active" : "")" asp-controller="Admin" asp-action="Test">Machine Learning Models</a>
+                    <a class="nav-link @(currentAction == "ChatBotSettings" ? "active" : "")" asp-controller="Admin" asp-action="ChatBotSettings">Chat Bot Settings</a>
                 </li>
-
+                <li class="nav-item">
+                    <a class="nav-link @(currentAction == "ChatBotHistory" ? "active" : "")" asp-controller="Admin" asp-action="ChatBotHistory">Chat Bot History</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(currentAction == "MachineLearningModels" ? "active" : "")" asp-controller="Admin" asp-action="MachineLearningModels">Machine Learning Models</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(currentAction == "DatabaseManagement" ? "active" : "")" asp-controller="Admin" asp-action="DatabaseManagement">Database Management</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        More
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item @(currentAction == "UserManagement" ? "active" : "")" asp-controller="Admin" asp-action="UserManagement">User Management</a></li>
+                        <li><a class="dropdown-item @(currentAction == "Settings" ? "active" : "")" asp-controller="Admin" asp-action="Settings">Settings</a></li>
+                        <li><a class="dropdown-item @(currentAction == "Reports" ? "active" : "")" asp-controller="Admin" asp-action="Reports">Reports</a></li>
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>
