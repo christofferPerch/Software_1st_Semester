@@ -34,10 +34,17 @@ namespace HeartDisease.Controllers {
         }
         public async Task<IActionResult> ChatBotSettings()
         {
-            var settings = await _chatBotService.GetChatBotSettings(1);
+            var (settings, lastTrained) = await _chatBotService.GetChatBotSettingsWithLastTrained(1);
             var models = await _chatBotService.GetAllGPTModels();
             ViewBag.Models = new SelectList(models, "Id", "ModelName");
-            return View(settings);
+
+            var viewModel = new ChatBotSettingsViewModel
+            {
+                Settings = settings,
+                LastTrained = lastTrained
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -45,9 +52,6 @@ namespace HeartDisease.Controllers {
         {
             if (ModelState.IsValid)
             {
-                // Ensure the temperature is within the correct range using Math.Clamp for double values
-                settings.Temperature = Math.Clamp(settings.Temperature, 0.0, 1.0);
-
                 await _chatBotService.UpdateChatBotSettings(settings);
                 return RedirectToAction("ChatBotSettings");
             }
@@ -77,6 +81,8 @@ namespace HeartDisease.Controllers {
                 if (response.IsSuccessStatusCode)
                 {
                     TempData["Message"] = "Chatbot training started successfully.";
+                    var lastTrained = DateTime.Now;
+                    await _chatBotService.UpdateChatBotLastTrained(1, lastTrained); 
                 }
                 else
                 {
@@ -85,6 +91,7 @@ namespace HeartDisease.Controllers {
             }
             return RedirectToAction("KnowledgeBase");
         }
+
 
         [HttpPost("upload")]
         public async Task<IActionResult> Upload(IFormFile file)

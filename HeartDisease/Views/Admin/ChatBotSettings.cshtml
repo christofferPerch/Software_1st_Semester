@@ -1,4 +1,4 @@
-﻿@model HeartDisease.Models.ChatBotSettings
+﻿@model HeartDisease.ViewModels.ChatBotSettingsViewModel
 
 @{
     ViewData["Title"] = "Chat Bot Settings";
@@ -13,44 +13,44 @@
 
     <div class="card shadow-sm p-4 mb-4 border">
         <h4 class="mb-3">Last Trained</h4>
-        <p class="text-muted">The chatbot was last trained on: </p>
+        <p class="text-muted">The chatbot was last trained on: @Model.LastTrained?.ToString("MMMM dd, yyyy hh:mm tt", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</p>
     </div>
 
     <form asp-controller="Admin" asp-action="UpdateChatBotSettings" method="post">
         <div class="card shadow-sm p-4 mb-4 border">
             <div class="form-group mb-3">
                 <label for="InitialMessage" class="form-label fw-bold">Initial Message:</label>
-                <input asp-for="InitialMessage" class="form-control" placeholder="Enter the initial message" />
-                <span asp-validation-for="InitialMessage" class="text-danger"></span>
+                <input asp-for="Settings.InitialMessage" class="form-control" placeholder="Enter the initial message" />
+                <span asp-validation-for="Settings.InitialMessage" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
                 <label for="BasePrompt" class="form-label fw-bold">Base Prompt:</label>
-                <textarea asp-for="BasePrompt" class="form-control" rows="3" placeholder="Enter the base prompt"></textarea>
-                <span asp-validation-for="BasePrompt" class="text-danger"></span>
+                <textarea asp-for="Settings.BasePrompt" class="form-control" rows="3" placeholder="Enter the base prompt"></textarea>
+                <span asp-validation-for="Settings.BasePrompt" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
                 <label for="GPTModelId" class="form-label fw-bold">Model:</label>
-                <select asp-for="GPTModelId" class="form-select" asp-items="ViewBag.Models">
+                <select asp-for="Settings.GPTModelId" class="form-select" asp-items="ViewBag.Models">
                 </select>
-                <span asp-validation-for="GPTModelId" class="text-danger"></span>
+                <span asp-validation-for="Settings.GPTModelId" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
                 <label for="Temperature" class="form-label fw-bold">Temperature:</label>
                 <div class="d-flex align-items-center">
-                    <input asp-for="Temperature" type="range" class="form-range" min="0" max="1" step="0.1" oninput="updateTemperatureValue(this.value)" />
-                    <span id="temperatureValue" class="ms-2">@Model.Temperature</span> 
+                    <input asp-for="Settings.Temperature" type="range" class="form-range" min="0" max="1" step="0.1" oninput="updateTemperatureValue(this.value)" />
+                    <span id="temperatureValue" class="ms-2">@Model.Settings.Temperature</span> <!-- Set initial value from model -->
                 </div>
                 <div class="d-flex justify-content-between">
                     <span>0.0</span>
                     <span>1.0</span>
                 </div>
-                <span asp-validation-for="Temperature" class="text-danger"></span>
+                <span asp-validation-for="Settings.Temperature" class="text-danger"></span>
             </div>
 
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Settings.Id" />
             <button type="submit" class="btn btn-primary w-100">Save Settings</button>
         </div>
     </form>
@@ -63,7 +63,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            const temperatureInput = document.querySelector('input[type="range"][asp-for="Temperature"]');
+            // Initialize the temperature value on page load
+            const temperatureInput = document.querySelector('input[type="range"][asp-for="Settings.Temperature"]');
             if (temperatureInput) {
                 updateTemperatureValue(temperatureInput.value);
             }

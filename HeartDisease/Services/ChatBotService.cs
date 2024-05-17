@@ -15,9 +15,9 @@ namespace HeartDisease.Services
             _dataAccess = dataAccess ?? throw new ArgumentNullException(nameof(dataAccess));
         }
 
-        public async Task<ChatBotSettings?> GetChatBotSettings(int id)
+        public async Task<(ChatBotSettings?, DateTime?)> GetChatBotSettingsWithLastTrained(int id)
         {
-            var sql = @"
+            var sqlSettings = @"
                 SELECT 
                     s.*, 
                     m.Id as ModelId, m.ModelName
@@ -26,8 +26,15 @@ namespace HeartDisease.Services
                 WHERE s.Id = @Id";
             var parameters = new { Id = id };
 
-            var settings = await _dataAccess.GetById<ChatBotSettings>(sql, parameters);
-            return settings;
+            var settings = await _dataAccess.GetById<ChatBotSettings>(sqlSettings, parameters);
+
+            var sqlLastTrained = @"
+                SELECT LastTrained
+                FROM ChatBot
+                WHERE ChatBotSettingsId = @Id";
+            var lastTrained = await _dataAccess.GetById<DateTime?>(sqlLastTrained, parameters);
+
+            return (settings, lastTrained);
         }
 
         public async Task UpdateChatBotSettings(ChatBotSettings settings)
@@ -52,5 +59,15 @@ namespace HeartDisease.Services
             var sql = "SELECT * FROM GPTModel";
             return await _dataAccess.GetAll<GPTModel>(sql);
         }
+
+        public async Task UpdateChatBotLastTrained(int chatBotSettingsId, DateTime lastTrained)
+        {
+            var sql = @"UPDATE ChatBot 
+                SET LastTrained = @LastTrained 
+                WHERE ChatBotSettingsId = @ChatBotSettingsId";
+            var parameters = new { ChatBotSettingsId = chatBotSettingsId, LastTrained = lastTrained };
+            await _dataAccess.Update(sql, parameters);
+        }
+
     }
 }
