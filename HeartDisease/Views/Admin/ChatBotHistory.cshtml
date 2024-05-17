@@ -1,7 +1,126 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model HeartDisease.ViewModels.ChatBotHistoryViewModel
+
 @{
+    ViewData["Title"] = "Chat Bot History";
 }
+
 @Html.Partial("_AdminNavBar")
-<h2>Chat Bot History Panel</h2>
+
+<div class="container my-5">
+    <h2 class="mb-4 text-center">Chat Bot History</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search by Message or Response">
+        </div>
+    </div>
+
+    <div class="table-responsive mb-4">
+        <table class="table table-hover table-bordered">
+            <thead class="table-header-custom">
+                <tr>
+                    <th scope="col">Message</th>
+                    <th scope="col">Response</th>
+                </tr>
+            </thead>
+            <tbody id="historyTable">
+                @foreach (var history in Model.ChatHistories)
+                {
+                    <tr>
+                        <td>@history.Message</td>
+                        <td>@history.Response</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<nav class="pagination-container">
+    <ul class="pagination justify-content-center">
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(Model.Page == i ? "active" : "")">
+                <a class="page-link" href="@Url.Action("ChatBotHistory", new { page = i, pageSize = Model.PageSize })">@i</a>
+            </li>
+        }
+    </ul>
+</nav>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchInput = document.getElementById("searchInput");
+            const historyTable = document.getElementById("historyTable").getElementsByTagName("tr");
+
+            searchInput.addEventListener("keyup", function () {
+                const filter = searchInput.value.toLowerCase();
+                Array.from(historyTable).forEach(function (row) {
+                    const message = row.cells[0].textContent.toLowerCase();
+                    const response = row.cells[1].textContent.toLowerCase();
+                    if (message.includes(filter) || response.includes(filter)) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+<style>
+    .container {
+        max-width: 1200px;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .form-control {
+        border-radius: 0.375rem;
+        border: 1px solid #ced4da;
+        padding: 0.75rem 1.25rem;
+    }
+
+    .table-header-custom {
+        background-color: #007bff;
+        color: #ffffff;
+    }
+
+        .table-header-custom th {
+            font-weight: bold;
+            text-align: center;
+        }
+
+    .pagination-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: white;
+        padding: 10px 0;
+        border-top: 1px solid #ddd;
+    }
+
+    .pagination {
+        margin-top: 0;
+    }
+
+        .pagination .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+        }
+
+        .pagination .page-link {
+            color: #007bff;
+        }
+
+            .pagination .page-link:hover {
+                background-color: #f8f9fa;
+                border-color: #ddd;
+                color: #0056b3;
+            }
+</style>

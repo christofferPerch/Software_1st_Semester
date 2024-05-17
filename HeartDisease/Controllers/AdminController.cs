@@ -14,64 +14,29 @@ namespace HeartDisease.Controllers {
         private readonly ILogger<AdminController> _logger;
         private readonly KnowledgeBaseService _knowledgeBaseService;
         private readonly ChatBotService _chatBotService;
+        private readonly ChatBotHistoryService _chatBotHistoryService;
 
-
-        public AdminController(ILogger<AdminController> logger, KnowledgeBaseService knowledgeBaseService, ChatBotService chatBotService)
+        public AdminController(ILogger<AdminController> logger, KnowledgeBaseService knowledgeBaseService,
+            ChatBotService chatBotService, ChatBotHistoryService chatBotHistoryService)
         {
             _logger = logger;
             _knowledgeBaseService = knowledgeBaseService;
             _chatBotService = chatBotService;
+            _chatBotHistoryService = chatBotHistoryService;
         }
 
         public IActionResult Index() {
             return View();
         }
 
+        #region Knowledge Base
+
         public async Task<IActionResult> KnowledgeBase()
         {
             var files = await _knowledgeBaseService.GetAllFilesAsync();
             return View(files);
         }
-        public async Task<IActionResult> ChatBotSettings()
-        {
-            var (settings, lastTrained) = await _chatBotService.GetChatBotSettingsWithLastTrained(1);
-            var models = await _chatBotService.GetAllGPTModels();
-            ViewBag.Models = new SelectList(models, "Id", "ModelName");
 
-            var viewModel = new ChatBotSettingsViewModel
-            {
-                Settings = settings,
-                LastTrained = lastTrained
-            };
-
-            return View(viewModel);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UpdateChatBotSettings(ChatBotSettings settings)
-        {
-            if (ModelState.IsValid)
-            {
-                await _chatBotService.UpdateChatBotSettings(settings);
-                return RedirectToAction("ChatBotSettings");
-            }
-            var models = await _chatBotService.GetAllGPTModels();
-            ViewBag.Models = new SelectList(models, "Id", "ModelName");
-            return View("ChatBotSettings", settings);
-        }
-
-        public IActionResult ChatBotHistory()
-        {
-            return View();
-        }
-        public IActionResult MachineLearningModels()
-        {
-            return View();
-        }
-        public IActionResult DatabaseManagement()
-        {
-            return View();
-        }
         [HttpPost]
         public async Task<IActionResult> TrainChatbot()
         {
@@ -82,7 +47,7 @@ namespace HeartDisease.Controllers {
                 {
                     TempData["Message"] = "Chatbot training started successfully.";
                     var lastTrained = DateTime.Now;
-                    await _chatBotService.UpdateChatBotLastTrained(1, lastTrained); 
+                    await _chatBotService.UpdateChatBotLastTrained(1, lastTrained);
                 }
                 else
                 {
@@ -144,5 +109,67 @@ namespace HeartDisease.Controllers {
             return File(fileStream, contentType, fileName);
         }
 
+        #endregion
+
+        #region Chat Bot Settings
+
+        public async Task<IActionResult> ChatBotSettings()
+        {
+            var (settings, lastTrained) = await _chatBotService.GetChatBotSettingsWithLastTrained(1);
+            var models = await _chatBotService.GetAllGPTModels();
+            ViewBag.Models = new SelectList(models, "Id", "ModelName");
+
+            var viewModel = new ChatBotSettingsViewModel
+            {
+                Settings = settings,
+                LastTrained = lastTrained
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateChatBotSettings(ChatBotSettings settings)
+        {
+            if (ModelState.IsValid)
+            {
+                await _chatBotService.UpdateChatBotSettings(settings);
+                return RedirectToAction("ChatBotSettings");
+            }
+            var models = await _chatBotService.GetAllGPTModels();
+            ViewBag.Models = new SelectList(models, "Id", "ModelName");
+            return View("ChatBotSettings", settings);
+        }
+
+        #endregion
+
+        #region Chat Bot History
+        public async Task<IActionResult> ChatBotHistory(int page = 1, int pageSize = 10)
+        {
+            var chatHistory = await _chatBotHistoryService.GetPaginatedChatHistoryAsync(page, pageSize);
+            var totalItems = await _chatBotHistoryService.GetChatHistoryCountAsync();
+
+            var viewModel = new ChatBotHistoryViewModel
+            {
+                ChatHistories = chatHistory,
+                Page = page,
+                PageSize = pageSize,
+                TotalItems = totalItems
+            };
+
+            return View(viewModel);
+        }
+
+
+        #endregion
+
+        public IActionResult MachineLearningModels()
+        {
+            return View();
+        }
+        public IActionResult DatabaseManagement()
+        {
+            return View();
+        }
     }
 }

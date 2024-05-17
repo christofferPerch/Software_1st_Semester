@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using HeartDisease.Models;
+using HeartDisease.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
@@ -8,13 +10,14 @@ namespace HeartDisease.Controllers
     [Authorize]
     public class ChatController : Controller
     {
-
         private readonly ILogger<ChatController> _logger;
         private readonly HttpClient _httpClient;
+        private readonly ChatBotHistoryService _chatBotHistoryService;
 
-        public ChatController(ILogger<ChatController> logger)
+        public ChatController(ILogger<ChatController> logger, ChatBotHistoryService chatBotHistoryService)
         {
             _logger = logger;
+            _chatBotHistoryService = chatBotHistoryService;
             _httpClient = new HttpClient();
         }
 
@@ -42,6 +45,15 @@ namespace HeartDisease.Controllers
                     var responseString = await response.Content.ReadAsStringAsync();
                     _logger.LogInformation("Received response from Python API: {Response}", responseString);
                     var jsonResponse = JsonConvert.DeserializeObject<ChatResponse>(responseString);
+
+                    var chatBotHistory = new ChatBotHistory
+                    {
+                        ChatBotId = 1, 
+                        Message = message.Message,
+                        Response = jsonResponse.Response
+                    };
+                    await _chatBotHistoryService.InsertChatHistoryAsync(chatBotHistory);
+
                     return Json(jsonResponse);
                 }
                 else

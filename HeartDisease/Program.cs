@@ -35,6 +35,9 @@ builder.Services.AddScoped<KnowledgeBaseService>();
 
 builder.Services.AddScoped<ChatBotService>();
 
+builder.Services.AddScoped<ChatBotHistoryService>();
+
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment()) {
