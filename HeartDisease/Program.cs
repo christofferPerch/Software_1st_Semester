@@ -37,6 +37,7 @@ builder.Services.AddScoped<ChatBotService>();
 
 builder.Services.AddScoped<ChatBotHistoryService>();
 
+builder.Services.AddScoped<DatabaseManagementService>();
 
 var app = builder.Build();
 

@@ -15,14 +15,15 @@ namespace HeartDisease.Controllers {
         private readonly KnowledgeBaseService _knowledgeBaseService;
         private readonly ChatBotService _chatBotService;
         private readonly ChatBotHistoryService _chatBotHistoryService;
-
+        private readonly DatabaseManagementService _databaseManagementService;
         public AdminController(ILogger<AdminController> logger, KnowledgeBaseService knowledgeBaseService,
-            ChatBotService chatBotService, ChatBotHistoryService chatBotHistoryService)
+            ChatBotService chatBotService, ChatBotHistoryService chatBotHistoryService, DatabaseManagementService databaseManagementService )
         {
             _logger = logger;
             _knowledgeBaseService = knowledgeBaseService;
             _chatBotService = chatBotService;
             _chatBotHistoryService = chatBotHistoryService;
+            _databaseManagementService = databaseManagementService;
         }
 
         public IActionResult Index() {
@@ -167,9 +168,40 @@ namespace HeartDisease.Controllers {
         {
             return View();
         }
+
+        #region Database Mangement 
+
         public IActionResult DatabaseManagement()
         {
             return View();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CheckFragmentation()
+        {
+            var fragmentationData = await _databaseManagementService.CheckFragmentationAsync();
+            _logger.LogInformation("Fragmentation data count: {Count}", fragmentationData.Count); // Logging for debug
+            return PartialView("_FragmentationResults", fragmentationData);
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> RebuildIndexes(string tableName)
+        {
+            await _databaseManagementService.RebuildIndexesAsync(tableName);
+            TempData["Message"] = "Indexes rebuilt successfully.";
+            return RedirectToAction("DatabaseManagement");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ReorganizeIndexes(string tableName)
+        {
+            await _databaseManagementService.ReorganizeIndexesAsync(tableName);
+            TempData["Message"] = "Indexes reorganized successfully.";
+            return RedirectToAction("DatabaseManagement");
+        }
+
+        #endregion
     }
 }
