@@ -18,8 +18,7 @@ builder.Services.AddScoped<IDataAccess, SqlDataAccess>(sp =>
 builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection("MongoDB"));
 
-builder.Services.AddScoped<IMongoDataAccess, MongoDataAccess>(sp =>
-{
+builder.Services.AddScoped<IMongoDataAccess, MongoDataAccess>(sp => {
     var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
     return new MongoDataAccess(settings.ConnectionString, settings.DatabaseName);
 });

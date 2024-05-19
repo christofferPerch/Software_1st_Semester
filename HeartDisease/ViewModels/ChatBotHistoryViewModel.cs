@@ -1,10 +1,7 @@
 ﻿using HeartDisease.Models;
-using System.Collections.Generic;
 
-namespace HeartDisease.ViewModels
-{
-    public class ChatBotHistoryViewModel
-    {
+namespace HeartDisease.ViewModels {
+    public class ChatBotHistoryViewModel {
         public List<ChatBotHistory> ChatHistories { get; set; }
         public int Page { get; set; }
         public int PageSize { get; set; }

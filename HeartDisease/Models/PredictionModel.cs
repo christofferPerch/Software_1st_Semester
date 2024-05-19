@@ -1,7 +1,5 @@
-﻿namespace HeartDisease.Models
-{
-    public class PredictionModel
-    {
+﻿namespace HeartDisease.Models {
+    public class PredictionModel {
         public List<string> Sex { get; set; }
         public List<string> GeneralHealth { get; set; }
         public List<int> PhysicalHealthDays { get; set; }
@@ -21,10 +19,9 @@
         public List<string> AlcoholDrinkers { get; set; }
         public List<string> HIVTesting { get; set; }
 
-        public SelectedModelModel SelectedModel { get; set; } 
+        public SelectedModelModel SelectedModel { get; set; }
 
-        public class SelectedModelModel
-        {
+        public class SelectedModelModel {
             public string SelectedModel { get; set; }
         }
     }

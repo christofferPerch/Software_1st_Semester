@@ -1,22 +1,15 @@
 ﻿using HeartDisease.DataAccess;
 using HeartDisease.Models;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace HeartDisease.Services
-{
-    public class ChatBotService
-    {
+namespace HeartDisease.Services {
+    public class ChatBotService {
         private readonly IDataAccess _dataAccess;
 
-        public ChatBotService(IDataAccess dataAccess)
-        {
+        public ChatBotService(IDataAccess dataAccess) {
             _dataAccess = dataAccess ?? throw new ArgumentNullException(nameof(dataAccess));
         }
 
-        public async Task<(ChatBotSettings?, DateTime?)> GetChatBotSettingsWithLastTrained(int id)
-        {
+        public async Task<(ChatBotSettings?, DateTime?)> GetChatBotSettingsWithLastTrained(int id) {
             var sqlSettings = @"
                 SELECT 
                     s.*, 
@@ -37,8 +30,7 @@ namespace HeartDisease.Services
             return (settings, lastTrained);
         }
 
-        public async Task UpdateChatBotSettings(ChatBotSettings settings)
-        {
+        public async Task UpdateChatBotSettings(ChatBotSettings settings) {
             var sql = @"UPDATE ChatBotSettings 
                         SET BasePrompt = @BasePrompt, Temperature = @Temperature, 
                             InitialMessage = @InitialMessage, GPTModelId = @GPTModelId 
@@ -46,22 +38,19 @@ namespace HeartDisease.Services
             await _dataAccess.Update(sql, settings);
         }
 
-        public async Task UpdateChatBot(ChatBot chatBot)
-        {
+        public async Task UpdateChatBot(ChatBot chatBot) {
             var sql = @"UPDATE ChatBot 
                         SET ChatBotSettingsId = @ChatBotSettingsId, LastTrained = @LastTrained 
                         WHERE Id = @Id";
             await _dataAccess.Update(sql, chatBot);
         }
 
-        public async Task<List<GPTModel>> GetAllGPTModels()
-        {
+        public async Task<List<GPTModel>> GetAllGPTModels() {
             var sql = "SELECT * FROM GPTModel";
             return await _dataAccess.GetAll<GPTModel>(sql);
         }
 
-        public async Task UpdateChatBotLastTrained(int chatBotSettingsId, DateTime lastTrained)
-        {
+        public async Task UpdateChatBotLastTrained(int chatBotSettingsId, DateTime lastTrained) {
             var sql = @"UPDATE ChatBot 
                 SET LastTrained = @LastTrained 
                 WHERE ChatBotSettingsId = @ChatBotSettingsId";

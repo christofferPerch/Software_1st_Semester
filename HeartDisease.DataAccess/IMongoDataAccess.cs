@@ -1,13 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.IO;
+﻿using MongoDB.Bson;
 using MongoDB.Driver.GridFS;
-using MongoDB.Bson;
 
-namespace HeartDisease.DataAccess
-{
-    public interface IMongoDataAccess
-    {
+namespace HeartDisease.DataAccess {
+    public interface IMongoDataAccess {
         Task<T?> GetById<T>(string id);
         Task<List<T>> GetAll<T>();
         Task Insert<T>(T entity);

@@ -1,32 +1,20 @@
-﻿using HeartDisease.DataAccess;
-using Dapper;
-using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
+using Dapper;
 
-namespace HeartDisease.DataAccess
-{
-    public class SqlDataAccess : IDataAccess
-    {
+namespace HeartDisease.DataAccess {
+    public class SqlDataAccess : IDataAccess {
         private readonly string _connectionString;
 
-        public SqlDataAccess(string connectionString)
-        {
+        public SqlDataAccess(string connectionString) {
             _connectionString = connectionString;
         }
 
-        private async Task<T> WithConnection<T>(Func<IDbConnection, Task<T>> getData)
-        {
-            try
-            {
+        private async Task<T> WithConnection<T>(Func<IDbConnection, Task<T>> getData) {
+            try {
                 using var connection = new SqlConnection(_connectionString);
                 return await getData(connection);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 throw new Exception("Error with connection to database: " + ex.Message, ex);
             }
         }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HeartDisease.DataAccess {
+﻿namespace HeartDisease.DataAccess {
     public interface IDataAccess {
 
         Task<T?> GetById<T>(string sql, object parameters);

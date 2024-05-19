@@ -1,23 +1,38 @@
-﻿@{
+﻿@model HeartDisease.ViewModels.ChatBotHistoryViewModel
+
+@{
     ViewData["Title"] = "Chat with Heart Doctor Bot";
 }
 
 <link rel="stylesheet" href="~/css/chatpanel.css" />
 
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8" style="margin-top: 100px;">
+    <div class="row">
+		<div class="history-container">
+
+                 <h3 class="history-heading">My old chats</h3>
+                 <div class="history-entry">
+                     <table class="history-table">              
+                         <tbody class="history-table-text" id="chatHistory">
+                                 <!-- Chat history will be loaded here -->
+                         </tbody>
+                     </table>
+      
+            </div>
+        </div>
+          <div class="col-md-8" style="margin-top: 100px;">
             <div class="chat-container">
                 <div class="chat-header">
-                    <span class="bot-name">Heart Doctor Bot</span>
+                    <span class="bot-name">Heart Doctor</span>
                     <button class="chat-reset-btn" onclick="resetChat()">
                         <img src="~/images/resetchatbutton.png" alt="Reset" class="reset-icon">
                     </button>
                 </div>
                 <div class="chat-body" id="chatBody">
                     <div class="chat-message bot-message">
+                         <img class="heartdoctor" src="~/images/heartdoctor.png" alt="Send" class="send-icon">
                         <div class="message-background message-background-received">
-                            Hello, I'm your digital heart health specialist. How may I assist you today?
+                            Hello, I'm your digital Heart Doctor. How may I assist you today?
                         </div>
                     </div>
                 </div>
@@ -30,39 +45,110 @@
                     </div>
                 </div>
             </div>
+
         </div>
-    </div>
+
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-    function sendMessage() {
-        var message = $('#chatInput').val().trim();
-        if (message) {
-            var userHtml = '<div class="chat-message user-message"><div class="message-background message-background-sent">' + message + '</div></div>';
-            $('#chatBody').append(userHtml);
-            $('#chatInput').val(''); 
+        var heartDoctorImagePath = '@Url.Content("~/images/heartdoctor.png")';
+        var deleteBtnImagePath = '@Url.Content("~/images/delete.png")';
+
+        function loadChatHistory() {
+            let url = '@Url.Action("ChatBotHistoryUser", "Chat")';
+            console.log("Requesting URL:", url);
 
             $.ajax({
-                url: '@Url.Action("SendMessage", "Chat")',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ message: message }),
+                url: '@Url.Action("ChatBotHistoryUser", "Chat")',
+                type: 'GET',
                 success: function (data) {
-                    if (data.response) {
-                        var botHtml = '<div class="chat-message bot-message"><div class="message-background message-background-received">' + data.response + '</div></div>';
-                        $('#chatBody').append(botHtml);
-                    } else {
-                        $('#chatBody').append('<div class="chat-message bot-message"><div class="message-background message-background-received">An error occurred while processing your message.</div></div>');
-                    }
+                    console.log("Data received:", data);
+                    var historyContainer = $('#chatHistory');
+                    historyContainer.empty(); // Clear previous entries
+
+                    data.forEach(function (historyItem) {
+                        // Main entry container
+                        var entry = $('<div class="history-entry" style=" display: flex; align-items: center;"></div>');
+
+                        // Text container for prompt and response
+                        var textContainer = $('<div style="justify-content: space-between; align-items: center;"></div>');
+
+                        // Appending prompt and response to the text container
+                        textContainer.append($('<div class="history-prompt" style="margin-right: 10px;"></div>').text(historyItem.message));
+                        textContainer.append($('<div class="history-response"></div>').html('• ' + historyItem.response));
+
+                        // Append text container to the main entry
+                        entry.append(textContainer);
+
+                        // Delete button
+                        var deleteButton = $('<button class="delete-btn" onclick="deleteChatHistory(' + historyItem.id + ')" style="border: none; background-color: #fdfdfd; color: black; padding: 5px 10px; cursor: pointer; margin-left: 20px;"><img class= "heartdoctor" src = "' + deleteBtnImagePath + '" alt="Doctor" style="width: 20px; height: 20px;"></button>');
+                        entry.append(deleteButton);
+
+                        // Append the complete entry to the history container
+                        historyContainer.append(entry);
+                    });
                 },
                 error: function (xhr) {
-                    console.log('Error:', xhr.responseText); 
-                    alert('Error sending message: ' + xhr.statusText);
+                    console.log('Error loading chat history for user:', xhr.responseText);
                 }
             });
         }
-    }
+
+        $(document).ready(function () {
+            loadChatHistory();
+        });
+
+
+        function deleteChatHistory(id) {
+            if (!confirm("Are you sure you want to delete this chat history?")) return;
+
+            $.ajax({
+                url: '@Url.Action("DeleteChatHistoryUser", "Chat")' + '?id=' + id,
+                type: 'DELETE',
+                success: function (response) {
+                    if (response.success) {
+                        alert('Chat history deleted successfully.');
+                        // $('#history-entry-' + id).remove(); 
+                    } else {
+                        alert('Failed to delete chat history: ' + response.message);
+                    }
+                },
+                error: function (xhr) {
+                    alert('Error deleting chat history.');
+                    console.error('Error deleting chat history:', xhr.responseText);
+                }
+            });
+        }
+
+        function sendMessage() {
+            var message = $('#chatInput').val().trim();
+            if (message) {
+                var userHtml = '<div class="chat-message user-message"><div class="message-background message-background-sent">' + message + '</div></div>';
+                $('#chatBody').append(userHtml);
+                $('#chatInput').val('');
+
+                $.ajax({
+                    url: '@Url.Action("SendMessage", "Chat")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ message: message }),
+                    success: function (data) {
+                        if (data.response) {
+                            var botHtml = '<div class="chat-message bot-message">' +
+                                '<img class="heartdoctor" src="' + heartDoctorImagePath + '" alt="Doctor">' +
+                                '<div class="message-background message-background-received">' + data.response + '</div></div>'; $('#chatBody').append(botHtml);
+                        } else {
+                            $('#chatBody').append('<div class="chat-message bot-message"><div class="message-background message-background-received">An error occurred while processing your message.</div></div>');
+                        }
+                    },
+                    error: function (xhr) {
+                        console.log('Error:', xhr.responseText);
+                        alert('Error sending message: ' + xhr.statusText);
+                    }
+                });
+            }
+        }
 
 
     function resetChat() {
@@ -75,4 +161,6 @@
             sendMessage();
         }
     }
+
+   
 </script>
