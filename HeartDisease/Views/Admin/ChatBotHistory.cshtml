@@ -1,0 +1,73 @@
+﻿@model HeartDisease.ViewModels.ChatBotHistoryViewModel
+
+@{
+    ViewData["Title"] = "Chat Bot History";
+}
+
+<link rel="stylesheet" href="~/css/chatbothistory.css asp-append-version="true" />
+
+@Html.Partial("_AdminNavBar")
+
+<div class="container my-5">
+    <h2 class="mb-4 text-center">Chat Bot History</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search by Message or Response">
+        </div>
+    </div>
+
+    <div class="table-responsive mb-4">
+        <table class="table table-hover table-bordered">
+            <thead class="table-header-custom">
+                <tr>
+                    <th scope="col">Message</th>
+                    <th scope="col">Response</th>
+                </tr>
+            </thead>
+            <tbody id="historyTable">
+                @foreach (var history in Model.ChatHistories)
+                {
+                    <tr>
+                        <td>@history.Message</td>
+                        <td>@history.Response</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<nav class="pagination-container">
+    <ul class="pagination justify-content-center">
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(Model.Page == i ? "active" : "")">
+                <a class="page-link" href="@Url.Action("ChatBotHistory", new { page = i, pageSize = Model.PageSize })">@i</a>
+            </li>
+        }
+    </ul>
+</nav>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchInput = document.getElementById("searchInput");
+            const historyTable = document.getElementById("historyTable").getElementsByTagName("tr");
+
+            searchInput.addEventListener("keyup", function () {
+                const filter = searchInput.value.toLowerCase();
+                Array.from(historyTable).forEach(function (row) {
+                    const message = row.cells[0].textContent.toLowerCase();
+                    const response = row.cells[1].textContent.toLowerCase();
+                    if (message.includes(filter) || response.includes(filter)) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            });
+        });
+    </script>
+}
+

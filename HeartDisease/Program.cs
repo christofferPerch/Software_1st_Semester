@@ -3,10 +3,10 @@ using HeartDisease.DataAccess;
 using HeartDisease.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
@@ -15,6 +15,14 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddScoped<IDataAccess, SqlDataAccess>(sp =>
     new SqlDataAccess(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.Configure<MongoDbSettings>(
+    builder.Configuration.GetSection("MongoDB"));
+
+builder.Services.AddScoped<IMongoDataAccess, MongoDataAccess>(sp =>
+{
+    var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+    return new MongoDataAccess(settings.ConnectionString, settings.DatabaseName);
+});
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
@@ -23,9 +31,16 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<PredictionService>();
 
+builder.Services.AddScoped<KnowledgeBaseService>();
+
+builder.Services.AddScoped<ChatBotService>();
+
+builder.Services.AddScoped<ChatBotHistoryService>();
+
+builder.Services.AddScoped<DatabaseManagementService>();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
     app.UseMigrationsEndPoint();
 } else {

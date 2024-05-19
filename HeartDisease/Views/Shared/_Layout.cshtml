@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/HeartDisease.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/messagecontainer.css asp-append-version="true" />
+
 </head>
 <body>
     <header>
@@ -37,6 +39,9 @@
             </div>
         </nav>
     </header>
+
+    <div id="messageContainer" class="message" style="display: none;"></div>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -49,3 +54,5 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+

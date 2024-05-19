@@ -1,0 +1,30 @@
+﻿@model List<HeartDisease.Models.FragmentationInfo>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Database</th>
+                <th>Table</th>
+                <th>Index</th>
+                <th>Fragmentation (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.DatabaseName</td>
+                    <td>@item.TableName</td>
+                    <td>@item.IndexName</td>
+                    <td>@item.FragmentationPercent</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No fragmentation data available.</p>
+}

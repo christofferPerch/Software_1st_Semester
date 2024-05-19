@@ -1,0 +1,73 @@
+﻿@model HeartDisease.ViewModels.ChatBotSettingsViewModel
+
+@{
+    ViewData["Title"] = "Chat Bot Settings";
+}
+
+<link rel="stylesheet" href="~/css/chatbotsettings.css asp-append-version="true" />
+
+@Html.Partial("_AdminNavBar")
+
+<div class="knowledge-base-container container my-5">
+    <h2 class="mb-4 text-center">Chat Bot Settings</h2>
+
+    <div class="card shadow-sm p-4 mb-4 border">
+        <h4 class="mb-3">Last Trained</h4>
+        <p class="text-muted">The chatbot was last trained on: @Model.LastTrained?.ToString("MMMM dd, yyyy hh:mm tt", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</p>
+    </div>
+
+    <form asp-controller="Admin" asp-action="UpdateChatBotSettings" method="post">
+        <div class="card shadow-sm p-4 mb-4 border">
+            <div class="form-group mb-3">
+                <label for="InitialMessage" class="form-label fw-bold">Initial Message:</label>
+                <input asp-for="Settings.InitialMessage" class="form-control" placeholder="Enter the initial message" />
+                <span asp-validation-for="Settings.InitialMessage" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="BasePrompt" class="form-label fw-bold">Base Prompt:</label>
+                <textarea asp-for="Settings.BasePrompt" class="form-control" rows="3" placeholder="Enter the base prompt"></textarea>
+                <span asp-validation-for="Settings.BasePrompt" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="GPTModelId" class="form-label fw-bold">Model:</label>
+                <select asp-for="Settings.GPTModelId" class="form-select" asp-items="ViewBag.Models">
+                </select>
+                <span asp-validation-for="Settings.GPTModelId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="Temperature" class="form-label fw-bold">Temperature:</label>
+                <div class="d-flex align-items-center">
+                    <input asp-for="Settings.Temperature" type="range" class="form-range" min="0" max="1" step="0.1" oninput="updateTemperatureValue(this.value)" />
+                    <span id="temperatureValue" class="ms-2">@Model.Settings.Temperature</span> <!-- Set initial value from model -->
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>0.0</span>
+                    <span>1.0</span>
+                </div>
+                <span asp-validation-for="Settings.Temperature" class="text-danger"></span>
+            </div>
+
+            <input type="hidden" asp-for="Settings.Id" />
+            <button type="submit" class="btn btn-primary w-100">Save Settings</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        function updateTemperatureValue(value) {
+            document.getElementById('temperatureValue').textContent = value;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize the temperature value on page load
+            const temperatureInput = document.querySelector('input[type="range"][asp-for="Settings.Temperature"]');
+            if (temperatureInput) {
+                updateTemperatureValue(temperatureInput.value);
+            }
+        });
+    </script>
+}

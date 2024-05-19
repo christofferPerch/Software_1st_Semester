@@ -1,0 +1,52 @@
+﻿@using HeartDisease.Models
+
+@{
+    ViewData["Title"] = "Database Management";
+}
+
+@Html.Partial("_AdminNavBar")
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">Database Management Panel</h2>
+
+    <div class="text-center mb-4">
+        <form asp-action="CheckFragmentation" method="post" id="checkFragmentationForm">
+            <button type="submit" class="btn btn-primary">Check Fragmentation</button>
+        </form>
+    </div>
+
+    <div id="fragmentationResults">
+        <!-- The partial view content will be loaded here via AJAX -->
+    </div>
+
+    <div class="text-center mt-4">
+        <form asp-action="RebuildIndexes" method="post">
+            <div class="form-group">
+                <label for="tableName">Table Name</label>
+                <input type="text" id="tableName" name="tableName" class="form-control" placeholder="Enter table name" required />
+            </div>
+            <button type="submit" class="btn btn-warning">Rebuild Indexes</button>
+        </form>
+        <form asp-action="ReorganizeIndexes" method="post" class="mt-2">
+            <div class="form-group">
+                <label for="tableName">Table Name</label>
+                <input type="text" id="tableName" name="tableName" class="form-control" placeholder="Enter table name" required />
+            </div>
+            <button type="submit" class="btn btn-info">Reorganize Indexes</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $("#checkFragmentationForm").submit(function (e) {
+                e.preventDefault();
+                $.post($(this).attr("action"), $(this).serialize(), function (data) {
+                    $("#fragmentationResults").html(data);
+                });
+            });
+        });
+    </script>
+}
+

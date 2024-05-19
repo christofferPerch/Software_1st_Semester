@@ -1,1 +1,55 @@
-﻿
+﻿/* _adminnavbar.css */
+
+/* Remove background color */
+.navbar {
+    background-color: transparent !important; /* Ensure transparency */
+    box-shadow: none; /* Remove box shadow if any */
+}
+
+/* Nav link default styling */
+.nav-link {
+    color: #343a40; /* Dark color for links */
+    font-weight: 500;
+    transition: color 0.3s, background-color 0.3s; /* Smooth transition */
+}
+
+    /* Active nav link */
+    .nav-link.active {
+        color: #007bff; /* Blue color for active link */
+        font-weight: bold;
+    }
+
+    /* Nav link hover effect */
+    .nav-link:hover {
+        color: #007bff; /* Blue color on hover */
+        background-color: rgba(0, 123, 255, 0.1); /* Light blue background on hover */
+        border-radius: 0.25rem; /* Rounded corners */
+    }
+
+/* Navbar brand styling */
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Navbar toggler button styling */
+.navbar-toggler {
+    border: none; /* Remove border from toggler */
+}
+
+/* Dropdown menu styling */
+.dropdown-menu {
+    border-radius: 0.25rem; /* Rounded corners for dropdown */
+}
+
+/* Active dropdown item styling */
+.dropdown-item.active, .dropdown-item:active {
+    background-color: #007bff; /* Blue background for active dropdown item */
+    color: #fff;
+}
+
+/* Dropdown item hover effect */
+.dropdown-item:hover {
+    background-color: rgba(0, 123, 255, 0.1); /* Light blue background on hover */
+    color: #007bff; /* Blue color on hover */
+}

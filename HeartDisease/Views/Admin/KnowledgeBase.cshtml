@@ -1,0 +1,127 @@
+﻿@{
+    ViewData["Title"] = "Knowledge Base";
+}
+@model List<MongoDB.Driver.GridFS.GridFSFileInfo>
+
+@Html.Partial("_AdminNavBar")
+
+<div class="knowledge-base-container container my-5 text-center">
+    <h2 class="mb-4">Knowledge Base</h2>
+
+    <form asp-controller="Admin" asp-action="Upload" method="post" enctype="multipart/form-data" class="mb-4">
+        <div class="card shadow-sm p-4 mb-4 border">
+            <div class="form-group mb-3">
+                <input type="file" name="file" class="form-control" accept=".csv, .pdf, .txt, .doc, .docx" required />
+                <small class="form-text text-muted">Allowed file types: .csv, .pdf, .txt, .doc, .docx</small>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Upload</button>
+        </div>
+    </form>
+
+    <div class="card shadow-sm p-4 mb-4 border">
+        <h4 class="mb-3">Sources overview</h4>
+        <ul class="list-group">
+            @foreach (var file in Model)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a href="@Url.Action("DownloadFile", "Admin", new { fileId = file.Id.ToString() })">@file.Filename</a>
+                    <form asp-action="DeleteFileById" asp-controller="Admin" method="post">
+                        <input type="hidden" name="fileId" value="@file.Id.ToString()" />
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <button id="train-chatbot-button" class="btn btn-success btn-lg">Train Chatbot</button>
+</div>
+
+@section Scripts {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#train-chatbot-button').click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("TrainChatbot", "Admin")",
+                    success: function (response) {
+                        displayMessage(response);
+                    },
+                    error: function () {
+                        displayMessage("Failed to start chatbot training.");
+                    }
+                });
+            });
+        });
+
+        function displayMessage(message) {
+            var messageHtml = '<div class="alert alert-info">' + message + '</div>';
+            $("#messageContainer").html(messageHtml).show();
+            setTimeout(function () {
+                $("#messageContainer").fadeOut('slow');
+            }, 3000);
+        }
+    </script>
+}
+
+
+<style>
+    /* Custom styles for the Knowledge Base page */
+    .knowledge-base-container {
+        max-width: 800px;
+        margin: auto;
+    }
+
+        .knowledge-base-container .card {
+            border: 1px solid #ddd; /* Small border for containers */
+            border-radius: 0.5rem;
+        }
+
+            .knowledge-base-container .card h4 {
+                font-weight: 600;
+            }
+
+        .knowledge-base-container .list-group-item {
+            border: none;
+            border-bottom: 1px solid #ddd;
+        }
+
+            .knowledge-base-container .list-group-item:last-child {
+                border-bottom: none;
+            }
+
+        .knowledge-base-container .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+            .knowledge-base-container .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #004085;
+            }
+
+        .knowledge-base-container .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+            .knowledge-base-container .btn-danger:hover {
+                background-color: #bd2130;
+                border-color: #b21f2d;
+            }
+
+        .knowledge-base-container .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+
+            .knowledge-base-container .btn-success:hover {
+                background-color: #218838;
+                border-color: #1e7e34;
+            }
+
+        .knowledge-base-container .form-label.fw-bold {
+            font-weight: bold;
+        }
+</style>
