@@ -1,5 +1,5 @@
 namespace HeartDisease.Models {
-    public class IndexFragmentationHistory {
+    public class FragmentationInfo {
         public int ID { get; set; }
         public string TableName { get; set; }
         public string IndexName { get; set; }
