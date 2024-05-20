@@ -12,12 +12,15 @@ namespace HeartDisease.Controllers {
     public class ChatController : Controller {
         private readonly ILogger<ChatController> _logger;
         private readonly HttpClient _httpClient;
+        private readonly ChatBotService _chatBotService;
         private readonly ChatBotHistoryService _chatBotHistoryService;
 
-        public ChatController(ILogger<ChatController> logger, ChatBotHistoryService chatBotHistoryService) {
+        public ChatController(ILogger<ChatController> logger, ChatBotHistoryService chatBotHistoryService, ChatBotService chatBotService = null)
+        {
             _logger = logger;
             _chatBotHistoryService = chatBotHistoryService;
             _httpClient = new HttpClient();
+            _chatBotService = chatBotService;
         }
 
         public IActionResult Index() {
@@ -59,6 +62,22 @@ namespace HeartDisease.Controllers {
             } catch (Exception ex) {
                 _logger.LogError(ex, "An error occurred while sending message to the Python API.");
                 return Json(new ChatResponse { Response = "An error occurred while sending message." });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetInitialMessage()
+        {
+            try
+            {
+                var chatBotSettingsId = 1; 
+                var initialMessage = await _chatBotService.GetInitialMessage(chatBotSettingsId);
+                return Json(new { initialMessage });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching initial message.");
+                return Json(new { initialMessage = "Hello, I'm your digital Heart Doctor. How may I assist you today?" });
             }
         }
         #endregion

@@ -58,5 +58,15 @@ namespace HeartDisease.Services {
             await _dataAccess.Update(sql, parameters);
         }
 
+        public async Task<string> GetInitialMessage(int chatBotSettingsId)
+        {
+            var sql = @"SELECT InitialMessage 
+                FROM ChatBotSettings 
+                WHERE Id = @Id";
+            var parameters = new { Id = chatBotSettingsId };
+            var initialMessage = await _dataAccess.GetById<string>(sql, parameters);
+            return initialMessage;
+        }
+
     }
 }
