@@ -39,6 +39,9 @@ namespace HeartDisease.DataAccess {
                 procedureName, parameters, commandType: CommandType.StoredProcedure));
         public Task<T> ExecuteScalar<T>(string sql, object? parameters = null) =>
            WithConnection(db => db.ExecuteScalarAsync<T>(sql, parameters));
+        public Task<List<T>> ExecuteStoredProcedureList<T>(string procedureName, object parameters) =>
+            WithConnection(db => db.QueryAsync<T>(
+                procedureName, parameters, commandType: CommandType.StoredProcedure).ContinueWith(t => t.Result.ToList()));
 
     }
 }

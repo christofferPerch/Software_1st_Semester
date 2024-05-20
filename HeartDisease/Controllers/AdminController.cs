@@ -40,60 +40,108 @@ namespace HeartDisease.Controllers {
         }
 
         [HttpPost]
-        public async Task<IActionResult> TrainChatbot() {
-            using (var client = new HttpClient()) {
-                var response = await client.PostAsync("http://127.0.0.1:5000/genai_embed", null);
-                if (response.IsSuccessStatusCode) {
-                    TempData["Message"] = "Chatbot training started successfully.";
-                    var lastTrained = DateTime.Now;
-                    await _chatBotService.UpdateChatBotLastTrained(1, lastTrained);
-                } else {
-                    TempData["Message"] = "Failed to start chatbot training.";
+        public async Task<IActionResult> TrainChatbot()
+        {
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var response = await client.PostAsync("http://127.0.0.1:5000/genai_embed", null);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData["SuccessMessage"] = "Chatbot training started successfully.";
+                        var lastTrained = DateTime.Now;
+                        await _chatBotService.UpdateChatBotLastTrained(1, lastTrained);
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Failed to start chatbot training.";
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error: {ex.Message}";
             }
             return RedirectToAction("KnowledgeBase");
         }
 
-
-        [HttpPost("upload")]
-        public async Task<IActionResult> Upload(IFormFile file) {
-            if (file == null || file.Length == 0) {
-                return View("KnowledgeBase", model: "No file selected");
+        [HttpPost]
+        public async Task<IActionResult> Upload(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                TempData["ErrorMessage"] = "No file selected.";
+                return RedirectToAction("KnowledgeBase");
             }
 
-            try {
-                using (var stream = file.OpenReadStream()) {
+            try
+            {
+                using (var stream = file.OpenReadStream())
+                {
                     var fileId = await _knowledgeBaseService.UploadFileAsync(file.FileName, stream);
-                    return RedirectToAction("KnowledgeBase", new { message = $"File uploaded successfully! File ID: {fileId}" });
+                    TempData["SuccessMessage"] = $"File uploaded successfully! File ID: {fileId}";
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 _logger.LogError($"Error uploading file: {ex.Message}");
-                return View("KnowledgeBase", model: $"Error uploading file: {ex.Message}");
+                TempData["ErrorMessage"] = $"Error uploading file: {ex.Message}";
             }
-        }
-
-        [HttpPost("delete-file-by-id")]
-        public async Task<IActionResult> DeleteFileById(string fileId) {
-            await _knowledgeBaseService.DeleteFileByIdAsync(fileId);
             return RedirectToAction("KnowledgeBase");
         }
 
-        [HttpPost("delete-file-by-name")]
-        public async Task<IActionResult> DeleteFileByName(string filename) {
-            await _knowledgeBaseService.DeleteFileByNameAsync(filename);
+        [HttpPost]
+        public async Task<IActionResult> DeleteFileById(string fileId)
+        {
+            try
+            {
+                await _knowledgeBaseService.DeleteFileByIdAsync(fileId);
+                TempData["SuccessMessage"] = "File deleted successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error deleting file: {ex.Message}";
+            }
             return RedirectToAction("KnowledgeBase");
         }
 
-        [HttpGet("download-file/{fileId}")]
-        public async Task<IActionResult> DownloadFile(string fileId) {
-            var objectId = new ObjectId(fileId);
-            var (fileStream, fileName) = await _knowledgeBaseService.GetFileAsync(objectId);
-            if (fileStream == null) {
-                return NotFound("File not found.");
+        [HttpPost]
+        public async Task<IActionResult> DeleteFileByName(string filename)
+        {
+            try
+            {
+                await _knowledgeBaseService.DeleteFileByNameAsync(filename);
+                TempData["SuccessMessage"] = "File deleted successfully.";
             }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error deleting file: {ex.Message}";
+            }
+            return RedirectToAction("KnowledgeBase");
+        }
 
-            var contentType = FileHelper.GetMimeType(fileName);
-            return File(fileStream, contentType, fileName);
+        [HttpGet]
+        public async Task<IActionResult> DownloadFile(string fileId)
+        {
+            try
+            {
+                var objectId = new ObjectId(fileId);
+                var (fileStream, fileName) = await _knowledgeBaseService.GetFileAsync(objectId);
+                if (fileStream == null)
+                {
+                    TempData["ErrorMessage"] = "File not found.";
+                    return RedirectToAction("KnowledgeBase");
+                }
+
+                var contentType = FileHelper.GetMimeType(fileName);
+                return File(fileStream, contentType, fileName);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error downloading file: {ex.Message}";
+                return RedirectToAction("KnowledgeBase");
+            }
         }
 
         #endregion
@@ -114,36 +162,79 @@ namespace HeartDisease.Controllers {
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateChatBotSettings(ChatBotSettings settings) {
-            if (ModelState.IsValid) {
-                await _chatBotService.UpdateChatBotSettings(settings);
+        public async Task<IActionResult> UpdateChatBotSettings(ChatBotSettings settings)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _chatBotService.UpdateChatBotSettings(settings);
+                    TempData["SuccessMessage"] = "ChatBot settings updated successfully.";
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"Error updating ChatBot settings: {ex.Message}";
+                }
+
                 return RedirectToAction("ChatBotSettings");
             }
+
             var models = await _chatBotService.GetAllGPTModels();
             ViewBag.Models = new SelectList(models, "Id", "ModelName");
             return View("ChatBotSettings", settings);
         }
 
+
         #endregion
 
         #region Chat Bot History
-        public async Task<IActionResult> ChatBotHistory(int page = 1, int pageSize = 10) {
-            var chatHistory = await _chatBotHistoryService.GetPaginatedChatHistoryAsync(page, pageSize);
-            var totalItems = await _chatBotHistoryService.GetChatHistoryCountAsync();
+        public async Task<IActionResult> ChatBotHistory(int page = 1, int pageSize = 10, string searchText = "")
+        {
+            ViewBag.SearchText = searchText;
 
-            var viewModel = new ChatBotHistoryViewModel {
-                ChatHistories = chatHistory,
+            var histories = await _chatBotHistoryService.GetRelevantHistory(searchText);
+
+            var totalItems = histories.Count();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var paginatedHistories = histories.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            var model = new ChatBotHistoryViewModel
+            {
+                ChatHistories = paginatedHistories,
                 Page = page,
                 PageSize = pageSize,
-                TotalItems = totalItems
+                TotalPages = totalPages
             };
 
-            return View(viewModel);
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SearchChatBotHistory(string searchText)
+        {
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                TempData["ErrorMessage"] = "Search text cannot be empty.";
+                return RedirectToAction("ChatBotHistory");
+            }
+
+            try
+            {
+                var results = await _chatBotHistoryService.GetRelevantHistory(searchText);
+                return View("ChatBotHistory", results);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error searching chat bot history: {ex.Message}";
+                return RedirectToAction("ChatBotHistory");
+            }
         }
 
 
         #endregion
 
+        #region Machine Learning Models
         public IActionResult MachineLearningModels() {
             return View();
         }
@@ -176,36 +267,59 @@ namespace HeartDisease.Controllers {
 
             return RedirectToAction("MachineLearningModels");
         }
+        #endregion
 
         #region Database Mangement 
-
-        public IActionResult DatabaseManagement() {
-            return View();
+        public async Task<IActionResult> DatabaseManagement()
+        {
+            var latestFragmentation = await _databaseManagementService.GetLatestIndexFragmentation();
+            return View(latestFragmentation);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CheckFragmentation() {
-            var fragmentationData = await _databaseManagementService.CheckFragmentationAsync();
-            _logger.LogInformation("Fragmentation data count: {Count}", fragmentationData.Count); // Logging for debug
-            return PartialView("_FragmentationResults", fragmentationData);
-        }
-
-
-
-        [HttpPost]
-        public async Task<IActionResult> RebuildIndexes(string tableName) {
-            await _databaseManagementService.RebuildIndexesAsync(tableName);
-            TempData["Message"] = "Indexes rebuilt successfully.";
+        public async Task<IActionResult> CheckIndexFragmentation()
+        {
+            try
+            {
+                await _databaseManagementService.CheckIndexFragmentation(DateTime.Now);
+                TempData["SuccessMessage"] = "Index fragmentation check completed successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error: {ex.Message}";
+            }
             return RedirectToAction("DatabaseManagement");
         }
 
         [HttpPost]
-        public async Task<IActionResult> ReorganizeIndexes(string tableName) {
-            await _databaseManagementService.ReorganizeIndexesAsync(tableName);
-            TempData["Message"] = "Indexes reorganized successfully.";
+        public async Task<IActionResult> RebuildIndex(string indexName)
+        {
+            try
+            {
+                await _databaseManagementService.RebuildIndex(indexName);
+                TempData["SuccessMessage"] = $"Index '{indexName}' rebuilt successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error: {ex.Message}";
+            }
             return RedirectToAction("DatabaseManagement");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ReorganizeIndex(string indexName)
+        {
+            try
+            {
+                await _databaseManagementService.ReorganizeIndex(indexName);
+                TempData["SuccessMessage"] = $"Index '{indexName}' reorganized successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error: {ex.Message}";
+            }
+            return RedirectToAction("DatabaseManagement");
+        }
         #endregion
     }
 }

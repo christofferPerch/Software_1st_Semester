@@ -9,6 +9,8 @@ namespace HeartDisease.Services {
             _dataAccess = dataAccess ?? throw new ArgumentNullException(nameof(dataAccess));
         }
 
+        #region Chat Bot History for Admin
+
         public async Task<List<ChatBotHistory>> GetPaginatedChatHistoryAsync(int page, int pageSize) {
             var sql = @"SELECT * FROM ChatBotHistory
                         ORDER BY Id OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
@@ -27,13 +29,17 @@ namespace HeartDisease.Services {
             await _dataAccess.Insert(sql, chatBotHistory);
         }
 
-        //public async Task InsertChatHistoryAsync(ChatBotHistory chatBotHistory) {
-        //    var sql = @"INSERT INTO ChatBotHistory (ChatBotId, Message, Response) 
-        //                VALUES (@ChatBotId, @Message, @Response)";
-        //    await _dataAccess.Insert(sql, chatBotHistory);
-        //}
+        public async Task<List<ChatBotHistory>> GetRelevantHistory(string searchText)
+        {
+            var sql = @"SELECT *
+                        FROM [dbo].[ChatBotHistory]
+                        WHERE [Message] LIKE '%' + @searchText + '%'
+                         OR [Response] LIKE '%' + @searchText + '%'";
 
-
+            var parameters = new { searchText };
+            return await _dataAccess.GetAll<ChatBotHistory>(sql, parameters);
+        }
+        #endregion
 
         #region Chat Bot History for User
         public async Task<List<ChatBotHistory>> GetUserChatHistoryAsync(string userId, int page, int pageSize) {

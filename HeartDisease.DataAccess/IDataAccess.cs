@@ -8,7 +8,7 @@
         Task<int> Delete(string sql, object parameters);
         Task<T?> ExecuteStoredProcedure<T>(string procedureName, object parameters);
         Task<T> ExecuteScalar<T>(string sql, object? parameters = null);
-
+        Task<List<T>> ExecuteStoredProcedureList<T>(string procedureName, object parameters);
 
     }
 }

@@ -33,8 +33,6 @@ namespace HeartDisease.Controllers {
                 _logger.LogWarning("Model state is invalid: {@ModelState}", ModelState);
                 return Json(new { error = "Model state is invalid." });
             }
-
-
             // User
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -93,13 +91,6 @@ namespace HeartDisease.Controllers {
                 _logger.LogError(ex, "An error occurred while sending data to the Python API.");
                 return Json(new { error = "An error occurred while predicting." });
             }
-        }
-
-        [HttpGet]
-        public async Task<ActionResult> getAllParameters() {
-            var predictionParameters = await _predictionService.GetAllPredictionParameters();
-            return Json(predictionParameters);
-        }
-
+        }  
     }
 }

@@ -12,14 +12,6 @@ namespace HeartDisease.Services {
             _logger = logger;
         }
 
-        public async Task<List<PredictionModel>> GetAllPredictionParameters() {
-            string SqlStr = @"SELECT TOP (10) *
-                             FROM HearthSurvey";
-
-            return await _dataAccess.GetAll<PredictionModel>(SqlStr);
-        }
-
-
         public async Task<int> InsertPredictionForUser(PredictionModel model, string userId) {
             const string sql = @"
             INSERT INTO HealthSurvey 

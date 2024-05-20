@@ -1,0 +1,42 @@
+﻿.database-management-container {
+    max-width: 1000px;
+    margin: auto;
+}
+
+    .database-management-container .card {
+        border: 1px solid #ddd;
+        border-radius: 0.5rem;
+    }
+
+    .database-management-container h3 {
+        font-weight: 600;
+    }
+
+    .database-management-container .btn {
+        margin-bottom: 0.5rem;
+    }
+
+    .database-management-container .table-responsive {
+        margin-top: 1rem;
+    }
+
+    .database-management-container table {
+        width: 100%;
+        border: 1px solid #ddd;
+        margin-top: 1rem;
+        border-radius: 0.5rem;
+    }
+
+        .database-management-container table th,
+        .database-management-container table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .database-management-container table th {
+            white-space: nowrap;
+        }
+
+    .database-management-container .alert {
+        text-align: center;
+    }

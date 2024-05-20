@@ -1,52 +1,69 @@
 ﻿@using HeartDisease.Models
+@model List<FragmentationHistory>
 
 @{
     ViewData["Title"] = "Database Management";
 }
 
+<link rel="stylesheet" href="~/css/databasemanagement.css" asp-append-version="true" />
+
 @Html.Partial("_AdminNavBar")
 
-<div class="container my-5">
-    <h2 class="text-center mb-4">Database Management Panel</h2>
+<div class="database-management-container container my-5">
+    <h2 class="mb-4 text-center">Database Management</h2>
 
-    <div class="text-center mb-4">
-        <form asp-action="CheckFragmentation" method="post" id="checkFragmentationForm">
-            <button type="submit" class="btn btn-primary">Check Fragmentation</button>
+    <div class="card shadow-sm p-4 mb-4 border">
+        <form asp-action="CheckIndexFragmentation" method="post">
+            <button type="submit" class="btn btn-primary w-100">Check Index Fragmentation</button>
         </form>
     </div>
 
-    <div id="fragmentationResults">
-        <!-- The partial view content will be loaded here via AJAX -->
-    </div>
-
-    <div class="text-center mt-4">
-        <form asp-action="RebuildIndexes" method="post">
-            <div class="form-group">
-                <label for="tableName">Table Name</label>
-                <input type="text" id="tableName" name="tableName" class="form-control" placeholder="Enter table name" required />
-            </div>
-            <button type="submit" class="btn btn-warning">Rebuild Indexes</button>
-        </form>
-        <form asp-action="ReorganizeIndexes" method="post" class="mt-2">
-            <div class="form-group">
-                <label for="tableName">Table Name</label>
-                <input type="text" id="tableName" name="tableName" class="form-control" placeholder="Enter table name" required />
-            </div>
-            <button type="submit" class="btn btn-info">Reorganize Indexes</button>
-        </form>
-    </div>
+    <h3 class="mb-4">Latest Fragmentation Data</h3>
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">No data available.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Table Name</th>
+                        <th>Index Name</th>
+                        <th>Fragmentation Percent</th>
+                        <th>Check Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.TableName</td>
+                            <td>@item.IndexName</td>
+                            <td>@item.FragmentationPercent</td>
+                            <td>@item.CheckDate.ToString("MMMM dd, yyyy hh:mm tt", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</td>
+                            <td>
+                                @if (item.FragmentationPercent > 30)
+                                {
+                                    <form asp-action="RebuildIndex" method="post" class="d-inline">
+                                        <input type="hidden" name="indexName" value="@item.IndexName" />
+                                        <button type="submit" class="btn btn-warning btn-sm">Rebuild</button>
+                                    </form>
+                                }
+                                else if (item.FragmentationPercent > 0 && item.FragmentationPercent <= 30)
+                                {
+                                    <form asp-action="ReorganizeIndex" method="post" class="d-inline">
+                                        <input type="hidden" name="indexName" value="@item.IndexName" />
+                                        <button type="submit" class="btn btn-info btn-sm">Reorganize</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 </div>
-
-@section Scripts {
-    <script>
-        $(function () {
-            $("#checkFragmentationForm").submit(function (e) {
-                e.preventDefault();
-                $.post($(this).attr("action"), $(this).serialize(), function (data) {
-                    $("#fragmentationResults").html(data);
-                });
-            });
-        });
-    </script>
-}
-

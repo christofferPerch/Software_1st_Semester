@@ -7,8 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/HeartDisease.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/messagecontainer.css asp-append-version="true" />
-
+    <link rel="stylesheet" href="~/css/messagecontainer.css" asp-append-version="true" />
 </head>
 <body>
     <header>
@@ -40,9 +39,22 @@
         </nav>
     </header>
 
-    <div id="messageContainer" class="message" style="display: none;"></div>
-
     <div class="container">
+        <div class="message-box-container">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="message success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="message error">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+        </div>
+
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -52,7 +64,20 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const successMessage = document.querySelector('.message.success');
+            const errorMessage = document.querySelector('.message.error');
+            if (successMessage) {
+                successMessage.style.display = 'block';
+                setTimeout(() => successMessage.style.display = 'none', 5000);
+            }
+            if (errorMessage) {
+                errorMessage.style.display = 'block';
+                setTimeout(() => errorMessage.style.display = 'none', 5000);
+            }
+        });
+    </script>
 </body>
 </html>
-
-

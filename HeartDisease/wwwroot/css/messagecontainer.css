@@ -6,7 +6,8 @@
     border: 1px solid transparent;
     border-radius: 5px;
     z-index: 1000;
-    display: none;
+    max-width: 300px; /* Set a maximum width */
+    display: none; /* Initially hidden */
 }
 
 .success {
