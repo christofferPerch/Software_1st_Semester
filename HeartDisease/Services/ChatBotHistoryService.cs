@@ -34,7 +34,8 @@ namespace HeartDisease.Services {
             var sql = @"SELECT *
                         FROM [dbo].[ChatBotHistory]
                         WHERE [Message] LIKE '%' + @searchText + '%'
-                         OR [Response] LIKE '%' + @searchText + '%'";
+                        OR [Response] LIKE '%' + @searchText + '%'
+                        ORDER BY Id DESC";
 
             var parameters = new { searchText };
             return await _dataAccess.GetAll<ChatBotHistory>(sql, parameters);
