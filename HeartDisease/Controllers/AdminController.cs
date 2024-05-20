@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MongoDB.Bson;
+using System.Net.Http;
 
 namespace HeartDisease.Controllers {
     [Authorize(Roles = "Admin")]
@@ -16,11 +17,13 @@ namespace HeartDisease.Controllers {
         private readonly ChatBotService _chatBotService;
         private readonly ChatBotHistoryService _chatBotHistoryService;
         private readonly DatabaseManagementService _databaseManagementService;
+        private readonly HttpClient _httpClient;
         public AdminController(ILogger<AdminController> logger, KnowledgeBaseService knowledgeBaseService,
             ChatBotService chatBotService, ChatBotHistoryService chatBotHistoryService, DatabaseManagementService databaseManagementService) {
             _logger = logger;
             _knowledgeBaseService = knowledgeBaseService;
             _chatBotService = chatBotService;
+            _httpClient = new HttpClient();
             _chatBotHistoryService = chatBotHistoryService;
             _databaseManagementService = databaseManagementService;
         }
@@ -143,6 +146,35 @@ namespace HeartDisease.Controllers {
 
         public IActionResult MachineLearningModels() {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RetrainModel()
+        {
+            _logger.LogInformation("Initiating model retraining");
+
+            try
+            {
+                var response = await _httpClient.PostAsync("http://127.0.0.1:5000/retrain_model", null);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation("Model retrained successfully");
+                    TempData["Message"] = "Model retrained and saved successfully.";
+                }
+                else
+                {
+                    _logger.LogError("Error response from Python API: {StatusCode} - {ReasonPhrase}", response.StatusCode, response.ReasonPhrase);
+                    TempData["Message"] = "Failed to retrain model.";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retraining the model.");
+                TempData["Message"] = "An error occurred while retraining the model.";
+            }
+
+            return RedirectToAction("MachineLearningModels");
         }
 
         #region Database Mangement 

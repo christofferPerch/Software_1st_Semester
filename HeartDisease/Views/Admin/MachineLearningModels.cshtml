@@ -1,7 +1,61 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Machine Learning Models";
 }
+
 @Html.Partial("_AdminNavBar")
 <h2>Machine Learning Model Panel</h2>
+
+<div class="machine-learning-models-container container my-5 text-center">
+    <h2 class="mb-4">Machine Learning Model Panel</h2>
+
+    <button id="retrain-model-button" class="btn btn-primary btn-lg">Retrain Model</button>
+
+    <div id="messageContainer" class="mt-4" style="display:none;"></div>
+</div>
+
+@section Scripts {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#retrain-model-button').click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("RetrainModel", "Admin")",
+                    success: function (response) {
+                        displayMessage(response);
+                    },
+                    error: function () {
+                        displayMessage("Failed to start model retraining.");
+                    }
+                });
+            });
+        });
+        function displayMessage(message) {
+            var messageHtml = '<div class="alert alert-info">' + message + '</div>';
+            $("#messageContainer").html(messageHtml).show();
+            setTimeout(function () {
+                $("#messageContainer").fadeOut('slow');
+            }, 3000);
+        }
+    </script>
+}
+
+<style>
+    /* Custom styles for the Machine Learning Models page */
+    .machine-learning-models-container {
+        max-width: 600px;
+        margin: auto;
+    }
+        .machine-learning-models-container .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+            .machine-learning-models-container .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #004085;
+            }
+        .machine-learning-models-container .alert {
+            display: inline-block;
+            width: auto;
+        }
+</style>
