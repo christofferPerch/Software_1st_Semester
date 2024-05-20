@@ -14,6 +14,7 @@ namespace HeartDisease.Controllers {
         private readonly ILogger<AdminController> _logger;
         private readonly KnowledgeBaseService _knowledgeBaseService;
         private readonly ChatBotService _chatBotService;
+        private readonly HttpClient _httpClient;
         private readonly ChatBotHistoryService _chatBotHistoryService;
         private readonly DatabaseManagementService _databaseManagementService;
         public AdminController(ILogger<AdminController> logger, KnowledgeBaseService knowledgeBaseService,
@@ -22,6 +23,7 @@ namespace HeartDisease.Controllers {
             _logger = logger;
             _knowledgeBaseService = knowledgeBaseService;
             _chatBotService = chatBotService;
+            _httpClient = new HttpClient();
             _chatBotHistoryService = chatBotHistoryService;
             _databaseManagementService = databaseManagementService;
         }
@@ -163,6 +165,28 @@ namespace HeartDisease.Controllers {
 
 
         #endregion
+
+        [HttpPost]
+        public async Task<IActionResult> RetrainModel() {
+            _logger.LogInformation("Initiating model retraining");
+
+            try {
+                var response = await _httpClient.PostAsync("http://127.0.0.1:5000/retrain_model", null);
+
+                if (response.IsSuccessStatusCode) {
+                    _logger.LogInformation("Model retrained successfully");
+                    TempData["Message"] = "Model retrained and saved successfully.";
+                } else {
+                    _logger.LogError("Error response from Python API: {StatusCode} - {ReasonPhrase}", response.StatusCode, response.ReasonPhrase);
+                    TempData["Message"] = "Failed to retrain model.";
+                }
+            } catch (Exception ex) {
+                _logger.LogError(ex, "An error occurred while retraining the model.");
+                TempData["Message"] = "An error occurred while retraining the model.";
+            }
+
+            return RedirectToAction("MachineLearningModels");
+        }
 
         public IActionResult MachineLearningModels()
         {
