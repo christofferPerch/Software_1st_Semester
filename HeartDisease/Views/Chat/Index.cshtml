@@ -59,7 +59,8 @@
                 </button>
             </div>
             <div class="modal-body">
-                Are you sure you want to delete this chat history?
+                <p>Are you sure you want to delete this chat history?</p>
+                <p><strong>Message:</strong> <span id="messageToDelete"></span></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -69,6 +70,7 @@
     </div>
 </div>
 
+
 <!-- Only include the libraries once -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
@@ -77,6 +79,7 @@
     var heartDoctorImagePath = '@Url.Content("~/images/heartdoctor.png")';
     var deleteBtnImagePath = '@Url.Content("~/images/delete.png")';
     var deleteChatHistoryId;
+    var deleteChatMessage;
 
     function loadChatHistory() {
         let url = '@Url.Action("ChatBotHistoryUser", "Chat")';
@@ -100,7 +103,7 @@
 
                     entry.append(textContainer);
 
-                    var deleteButton = $('<button class="delete-btn" onclick="deleteChatHistory(' + historyItem.id + ')" style="border: none; background-color: #fdfdfd; color: black; padding: 5px 10px; cursor: pointer; margin-left: 20px;"><img class= "heartdoctor" src = "' + deleteBtnImagePath + '" alt="Doctor" style="width: 20px; height: 20px;"></button>');
+                    var deleteButton = $('<button class="delete-btn" onclick="deleteChatHistory(' + historyItem.id + ', \'' + historyItem.message + '\')" style="border: none; background-color: #fdfdfd; color: black; padding: 5px 10px; cursor: pointer; margin-left: 20px;"><img class= "heartdoctor" src = "' + deleteBtnImagePath + '" alt="Doctor" style="width: 20px; height: 20px;"></button>');
                     entry.append(deleteButton);
 
                     historyContainer.append(entry);
@@ -160,8 +163,10 @@
         fetchInitialMessage();
     });
 
-    function deleteChatHistory(id) {
+    function deleteChatHistory(id, message) {
         deleteChatHistoryId = id;
+        deleteChatMessage = message;
+        $('#messageToDelete').text(message);
         $('#deleteConfirmationModal').modal('show');
     }
 
@@ -207,3 +212,4 @@
         }
     }
 </script>
+
