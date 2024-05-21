@@ -30,7 +30,7 @@
                     type: "POST",
                     url: "@Url.Action("RetrainModelLR", "Admin")",
                     success: function (response) {
-                        displayMessage(response);
+                        displayMessage(response.message);
                     },
                     error: function () {
                         displayMessage("Failed to start Logistic Regression model retraining.");
@@ -43,7 +43,7 @@
                     type: "POST",
                     url: "@Url.Action("RetrainModelRF", "Admin")",
                     success: function (response) {
-                        displayMessage(response);
+                        displayMessage(response.message);
                     },
                     error: function () {
                         displayMessage("Failed to start Random Forest model retraining.");
@@ -56,7 +56,7 @@
                     type: "POST",
                     url: "@Url.Action("RetrainModelTF", "Admin")",
                     success: function (response) {
-                        displayMessage(response);
+                        displayMessage(response.message);
                     },
                     error: function () {
                         displayMessage("Failed to start TensorFlow model retraining.");

@@ -189,23 +189,21 @@ namespace HeartDisease.Controllers {
 
                 if (response.IsSuccessStatusCode) {
                     _logger.LogInformation($"{modelName} model retrained successfully");
-                    TempData["Message"] = $"{modelName} model retrained and saved successfully.";
+                    return Json(new { message = $"{modelName} model retrained and saved successfully." });
                 } else {
                     _logger.LogError("Error response from Python API: {StatusCode} - {ReasonPhrase}", response.StatusCode, response.ReasonPhrase);
-                    TempData["Message"] = $"Failed to retrain {modelName} model.";
+                    return Json(new { message = $"Failed to retrain {modelName} model." });
                 }
             } catch (Exception ex) {
                 _logger.LogError(ex, $"An error occurred while retraining the {modelName} model.");
-                TempData["Message"] = $"An error occurred while retraining the {modelName} model.";
+                return Json(new { message = $"An error occurred while retraining the {modelName} model." });
             }
-
-            return RedirectToAction("MachineLearningModels");
         }
 
-        public IActionResult MachineLearningModels()
-        {
+        public IActionResult MachineLearningModels() {
             return View();
         }
+
 
         #region Database Mangement 
 
