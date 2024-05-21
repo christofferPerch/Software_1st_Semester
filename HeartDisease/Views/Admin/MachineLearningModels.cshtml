@@ -19,46 +19,70 @@
     </div>
 
     <div id="messageContainer" class="mt-4" style="display:none;"></div>
+    <div id="loadingContainer" class="mt-4" style="display:none;">
+        <div class="spinner-border text-primary" role="status">
+            
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+            function startLoading() {
+                $("#loadingContainer").show();
+                $("#messageContainer").hide();
+            }
+
+            function stopLoading() {
+                $("#loadingContainer").hide();
+                $("#messageContainer").show();
+            }
+
             $('#retrain-lr-button').click(function () {
+                startLoading();
                 $.ajax({
                     type: "POST",
                     url: "@Url.Action("RetrainModelLR", "Admin")",
                     success: function (response) {
+                        stopLoading();
                         displayMessage(response.message);
                     },
                     error: function () {
+                        stopLoading();
                         displayMessage("Failed to start Logistic Regression model retraining.");
                     }
                 });
             });
 
             $('#retrain-rf-button').click(function () {
+                startLoading();
                 $.ajax({
                     type: "POST",
                     url: "@Url.Action("RetrainModelRF", "Admin")",
                     success: function (response) {
+                        stopLoading();
                         displayMessage(response.message);
                     },
                     error: function () {
+                        stopLoading();
                         displayMessage("Failed to start Random Forest model retraining.");
                     }
                 });
             });
 
             $('#retrain-tf-button').click(function () {
+                startLoading();
                 $.ajax({
                     type: "POST",
                     url: "@Url.Action("RetrainModelTF", "Admin")",
                     success: function (response) {
+                        stopLoading();
                         displayMessage(response.message);
                     },
                     error: function () {
+                        stopLoading();
                         displayMessage("Failed to start TensorFlow model retraining.");
                     }
                 });
@@ -105,4 +129,9 @@
             display: inline-block;
             width: auto;
         }
+
+    .spinner-border {
+        width: 3rem;
+        height: 3rem;
+    }
 </style>
