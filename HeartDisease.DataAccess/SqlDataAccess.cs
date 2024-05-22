@@ -42,5 +42,14 @@ namespace HeartDisease.DataAccess {
         public Task<T> ExecuteScalar<T>(string sql, object? parameters = null) =>
            WithConnection(db => db.ExecuteScalarAsync<T>(sql, parameters));
 
+
+        //public Task<int> InsertAndReturnId(string sql, object parameters) {
+        //    return WithConnection(async db => {
+        //        var result = await db.ExecuteScalarAsync<int>(sql, parameters);
+        //        return result;
+        //    });
     }
 }
+
+
+

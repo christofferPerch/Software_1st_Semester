@@ -116,11 +116,23 @@
                         <p><strong>Manufacturer:</strong> Placeholder for Manufacturer Name</p>
                     </div>
                     <p class="price-bottom-left">DKK @Model.Price.ToString("N2")</p>
-                    <div class="button-group">
-                        <a href="@Url.Action("Index", "Webshop")" class="btn btn-back">Back to Shop</a>
-                        <a href="#" class="btn btn-primary">Add to Cart</a> <!-- Placeholder for actual cart functionality -->
-                    </div>
-                </div>
+                    <form asp-controller="Webshop" asp-action="AddToCart" method="post">
+                        <input type="hidden" name="productId" value="@Model.ProductID" />
+                        <label for="quantity">Quantity:</label>
+                        <input type="number" name="quantity" id="quantity" value="1" min="1" max="10" class="form-control" style="width: auto;" />
+                        <div class="button-group">
+                            <a href="@Url.Action("Index", "Webshop")" class="btn btn-back">Back to Shop</a>
+                            <button type="submit" class="btn btn-primary">Add to Cart</button>
+                        </div>
+                    </form>
+
+                    <!--   <div class="button-group">
+                    <!--       <a href="@Url.Action("Index", "Webshop")" class="btn btn-back">Back to Shop</a>
+                    <!--        <a href="#" class="btn btn-primary">Add to Cart</a> <!-- Placeholder for actual cart functionality -->
+                    <!--    </div>
+
+
+                  </div>
             </div>
         </div>
     </div>
