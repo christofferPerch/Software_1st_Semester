@@ -14,11 +14,17 @@ namespace HeartDisease.Services.Webshop {
             return await _dataAccess.GetAll<Order>(sql);
         }
         public async Task<List<OrderHistory>> GetOrderHistoryByOrderIdAsync(int orderId)
-{
-    string sql = $"SELECT * FROM OrderHistory WHERE OrderID = @OrderId";
-    var parameters = new { OrderId = orderId };
-    return await _dataAccess.GetAll<OrderHistory>(sql, parameters);
-}
+        {
+            string sql = $"SELECT * FROM OrderHistory WHERE OrderID = @OrderId";
+            var parameters = new { OrderId = orderId };
+            return await _dataAccess.GetAll<OrderHistory>(sql, parameters);
+        }
+        public async Task<int> UpdateOrderHistoryStatus(int orderId)
+        {
+            var parameters = new { OrderId = orderId };
+            return await _dataAccess.Update("UPDATE OrderHistory SET Status = 'completed' WHERE OrderID = @OrderId", parameters);
+
+        }
 
     }
 }

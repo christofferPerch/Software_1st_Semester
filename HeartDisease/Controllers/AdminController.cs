@@ -366,6 +366,28 @@ namespace HeartDisease.Controllers {
 
             return View(viewModel);
         }
+        [HttpPost]
+        public async Task<IActionResult> UpdateOrderHistoryStatus(int orderId, string newStatus)
+        {
+            // TODO: Validate the input parameters.
+
+            // Update the status of the OrderHistory record.
+            Console.WriteLine(orderId);
+
+
+            try
+            {
+                await _orderManagementService.UpdateOrderHistoryStatus(orderId);
+                TempData["SuccessMessage"] = $"status of order with id:'{orderId}' updated successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error: {ex.Message}";
+            }
+
+            // Redirect to the Order Management page.
+            return RedirectToAction("OrderManagement");
+        }
     }
 
     #endregion

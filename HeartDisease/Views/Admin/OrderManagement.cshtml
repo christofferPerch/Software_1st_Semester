@@ -2,15 +2,20 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    ViewData["Title"] = "Order Management";
+
+    }
 @model HeartDisease.ViewModels.OrderManagementViewModel
 
 @Html.Partial("_AdminNavBar")
-<h2>Order Management</h2>
+<div class="order-management-container container my-5">
+<h2 class="mb-4 text-center">Order Management</h2>
 
 @if (Model.Orders != null && Model.Orders.Any())
 {
-    <table class="table">
-        <thead>
+    <div class="table-responsive">
+    <table class="table table-striped table-hover table-bordered">
+        <thead class="table-dark">
             <tr>
                 <th>Order ID</th>
                 <th>User ID</th>
@@ -18,6 +23,7 @@
                 <th>Total Amount</th>
                 <th>Last Motified Date</th>
                 <th>Status</th>
+                <th>Update Status</th>
             </tr>
         </thead>
         <tbody>
@@ -34,15 +40,75 @@
                             {
                                     <td>@history.DateModified.ToString("dd/MM/yyyy")</td>
                                     <td>@history.Status</td>
+                                    @if (@history.Status == "completed")
+                                    {
+                                        <td>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="UpdateOrderHistoryStatus" method="post">
+                                            <input type="hidden" name="orderId" value="@order.OrderID" />
+                                        <td><button type="submit" class="btn btn-primary">Update</button></td>
+                                        </form>
+                                    }
                             }
                         }
                     </tr>
             }
         </tbody>
     </table>
+    </div>
 }
 else
 {
     <p>No orders found.</p>
 }
-}
+
+</div>
+
+<style>
+    .order-management-container {
+        max-width: 1000px;
+        margin: auto;
+    }
+
+        .order-management-container .card {
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+        }
+
+        .order-management-container h3 {
+            font-weight: 600;
+        }
+
+        .order-management-container .btn {
+            margin-bottom: 0.5rem;
+        }
+
+        .order-management-container .table-responsive {
+            margin-top: 1rem;
+        }
+
+        .order-management-container table {
+            width: 100%;
+            border: 1px solid #ddd;
+            margin-top: 1rem;
+            border-radius: 0.5rem;
+        }
+
+            .order-management-container table th,
+            .order-management-container table td {
+                text-align: center;
+                vertical-align: middle;
+            }
+
+            .order-management-container table th {
+                white-space: nowrap;
+            }
+
+        .order-management-container .alert {
+            text-align: center;
+        }
+
+</style>
