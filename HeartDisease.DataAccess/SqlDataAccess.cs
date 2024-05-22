@@ -25,6 +25,8 @@ namespace HeartDisease.DataAccess {
         public Task<List<T>> GetAll<T>(string sql, object? parameters = null) =>
             WithConnection(db => db.QueryAsync<T>(sql, parameters).ContinueWith(t => t.Result.ToList()));
 
+
+
         public Task<int> Insert(string sql, object parameters) =>
             WithConnection(db => db.ExecuteAsync(sql, parameters));
 
@@ -45,3 +47,6 @@ namespace HeartDisease.DataAccess {
 
     }
 }
+
+
+

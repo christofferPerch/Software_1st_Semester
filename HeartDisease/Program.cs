@@ -1,6 +1,7 @@
 using HeartDisease.Data;
 using HeartDisease.DataAccess;
 using HeartDisease.Services;
+using HeartDisease.Services.Webshop;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -37,6 +38,16 @@ builder.Services.AddScoped<ChatBotService>();
 builder.Services.AddScoped<ChatBotHistoryService>();
 
 builder.Services.AddScoped<DatabaseManagementService>();
+
+// Webshop
+builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<OrderItemService>();
+builder.Services.AddScoped<OrderHistoryService>();
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<ReviewService>();
+builder.Services.AddScoped<SideEffectService>();
+builder.Services.AddScoped<ManufacturerService>();
+
 
 var app = builder.Build();
 

@@ -1,4 +1,5 @@
 ﻿<!DOCTYPE html>
+<!-- <a href="c:\users\markl\onedrive\desktop\softdev\ai-ml\1sem\eksamen\vs_solution\software_1st_semester\heartdisease\services\chatbothistoryservice.cs">c:\users\markl\onedrive\desktop\softdev\ai-ml\1sem\eksamen\vs_solution\software_1st_semester\heartdisease\services\chatbothistoryservice.cs</a> -->
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -13,7 +14,7 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">HeartDisease</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Webshop" asp-action="Index">HeartDisease</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -23,14 +24,18 @@
                         @if (User!.Identity!.IsAuthenticated)
                         {
                             <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Webshop" asp-action="Index">Webshop</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="HeartDisease" asp-action="Index">Heart Disease Information</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Prediction" asp-action="Index">Heart Disease Prediction</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Chat" asp-action="Index">Heart Doctor</a>
-                            </li>
+                             <li class="nav-item">
+                                 <a class="nav-link" asp-area="" asp-controller="Chat" asp-action="Index">Heart Doctor</a>
+                             </li>
+                     
                         }
                     </ul>
                     <partial name="_LoginPartial" />
