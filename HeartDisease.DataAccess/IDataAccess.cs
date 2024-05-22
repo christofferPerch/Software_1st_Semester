@@ -9,8 +9,6 @@
         Task<int> Delete(string sql, object parameters);
         Task<T?> ExecuteStoredProcedure<T>(string procedureName, object parameters);
         Task<T> ExecuteScalar<T>(string sql, object? parameters = null);
-        //Task<int> InsertAndReturnId(string sql, object parameters);
-
 
     }
 }

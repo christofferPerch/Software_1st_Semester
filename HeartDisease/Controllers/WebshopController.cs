@@ -64,38 +64,6 @@ namespace HeartDisease.Controllers {
         #endregion
 
         #region Shopping Cart
-        //[HttpPost]
-        //public async Task<IActionResult> AddToCart(int productId, int quantity) {
-        //    try {
-        //        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get user ID from the authentication claims
-        //        var activeOrder = await _orderService.GetActiveOrderByUserId(userId);
-
-        //        if (activeOrder == null) {
-        //            activeOrder = await _orderService.CreateOrder(userId);
-        //            await _orderHistoryService.CreateOrderHistory(activeOrder.OrderID, "Pending");
-        //        }
-
-        //        var product = await _productService.GetProductByIdAsync(productId);
-        //        if (product == null) {
-        //            return NotFound("Product not found");
-        //        }
-
-        //        var orderItem = new OrderItem {
-        //            OrderID = activeOrder.OrderID,
-        //            ProductID = productId,
-        //            Quantity = quantity,
-        //            PriceAtTimeOrder = product.Price
-        //        };
-
-        //        await _orderItemService.InsertOrderItem(orderItem);
-        //        await _orderService.UpdateOrderTotal(activeOrder.OrderID);
-
-        //        return RedirectToAction("Cart"); // Redirect to cart view
-        //    } catch (Exception ex) {
-        //        _logger.LogError("Error adding to cart: {Message}", ex.Message);
-        //        return View("Error");
-        //    }
-        //}
 
 
         #endregion
