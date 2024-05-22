@@ -240,33 +240,39 @@ namespace HeartDisease.Controllers {
         }
 
         [HttpPost]
-        public async Task<IActionResult> RetrainModel()
-        {
-            _logger.LogInformation("Initiating model retraining");
-
-            try
-            {
-                var response = await _httpClient.PostAsync("http://127.0.0.1:5000/retrain_model", null);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    _logger.LogInformation("Model retrained successfully");
-                    TempData["Message"] = "Model retrained and saved successfully.";
-                }
-                else
-                {
-                    _logger.LogError("Error response from Python API: {StatusCode} - {ReasonPhrase}", response.StatusCode, response.ReasonPhrase);
-                    TempData["Message"] = "Failed to retrain model.";
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while retraining the model.");
-                TempData["Message"] = "An error occurred while retraining the model.";
-            }
-
-            return RedirectToAction("MachineLearningModels");
+        public async Task<IActionResult> RetrainModelLR() {
+            return await RetrainModel("http://127.0.0.1:5000/retrain_lr", "Logistic Regression");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> RetrainModelRF() {
+            return await RetrainModel("http://127.0.0.1:5000/retrain_rf", "Random Forest");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RetrainModelTF() {
+            return await RetrainModel("http://127.0.0.1:5000/retrain_tf", "TensorFlow");
+        }
+
+        private async Task<IActionResult> RetrainModel(string url, string modelName) {
+            _logger.LogInformation($"Initiating {modelName} model retraining");
+
+            try {
+                var response = await _httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode) {
+                    _logger.LogInformation($"{modelName} model retrained successfully");
+                    return Json(new { message = $"{modelName} model retrained and saved successfully." });
+                } else {
+                    _logger.LogError("Error response from Python API: {StatusCode} - {ReasonPhrase}", response.StatusCode, response.ReasonPhrase);
+                    return Json(new { message = $"Failed to retrain {modelName} model." });
+                }
+            } catch (Exception ex) {
+                _logger.LogError(ex, $"An error occurred while retraining the {modelName} model.");
+                return Json(new { message = $"An error occurred while retraining the {modelName} model." });
+            }
+        }
+
         #endregion
 
         #region Database Mangement 
