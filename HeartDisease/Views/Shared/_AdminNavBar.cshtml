@@ -26,12 +26,10 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        More
+                        Webshop
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item @(currentAction == "UserManagement" ? "active" : "")" asp-controller="Admin" asp-action="UserManagement">User Management</a></li>
-                        <li><a class="dropdown-item @(currentAction == "Settings" ? "active" : "")" asp-controller="Admin" asp-action="Settings">Settings</a></li>
-                        <li><a class="dropdown-item @(currentAction == "Reports" ? "active" : "")" asp-controller="Admin" asp-action="Reports">Reports</a></li>
+                        <li><a class="dropdown-item @(currentAction == "OrderManagement" ? "active" : "")" asp-controller="Admin" asp-action="OrderManagement">Orders</a></li>
                     </ul>
                 </li>
             </ul>
