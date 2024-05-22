@@ -19,6 +19,7 @@ namespace HeartDisease.DataAccess {
             }
         }
 
+
         public Task<T?> GetById<T>(string sql, object parameters) =>
             WithConnection(db => db.QueryAsync<T>(sql, parameters).ContinueWith(t => t.Result.FirstOrDefault()));
 
