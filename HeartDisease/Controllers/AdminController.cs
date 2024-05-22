@@ -1,4 +1,5 @@
 ﻿using HeartDisease.Models;
+using HeartDisease.Models.Webshop;
 using HeartDisease.Services;
 using HeartDisease.Services.Webshop;
 using HeartDisease.Utils;
@@ -349,9 +350,23 @@ namespace HeartDisease.Controllers {
         public async Task<IActionResult> OrderManagement()
         {
             var orders = await _orderManagementService.GetAllOrdersAsync();
-            return View(orders);
-        }
+            var orderHistories = new Dictionary<int, List<OrderHistory>>();
 
-        #endregion
+            foreach (var order in orders)
+            {
+                var histories = await _orderManagementService.GetOrderHistoryByOrderIdAsync(order.OrderID);
+                orderHistories.Add(order.OrderID, histories);
+            }
+
+            var viewModel = new OrderManagementViewModel
+            {
+                Orders = orders,
+                OrderHistories = orderHistories
+            };
+
+            return View(viewModel);
+        }
     }
+
+    #endregion
 }
