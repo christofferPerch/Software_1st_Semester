@@ -1,12 +1,12 @@
 ﻿using HeartDisease.Models;
 using HeartDisease.Services;
+using HeartDisease.Services.Webshop;
 using HeartDisease.Utils;
 using HeartDisease.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MongoDB.Bson;
-using System.Net.Http;
 
 namespace HeartDisease.Controllers {
     [Authorize(Roles = "Admin")]
@@ -17,24 +17,29 @@ namespace HeartDisease.Controllers {
         private readonly ChatBotService _chatBotService;
         private readonly ChatBotHistoryService _chatBotHistoryService;
         private readonly DatabaseManagementService _databaseManagementService;
+        private readonly OrderManagementService _orderManagementService;
         private readonly HttpClient _httpClient;
         public AdminController(ILogger<AdminController> logger, KnowledgeBaseService knowledgeBaseService,
-            ChatBotService chatBotService, ChatBotHistoryService chatBotHistoryService, DatabaseManagementService databaseManagementService) {
+            ChatBotService chatBotService, ChatBotHistoryService chatBotHistoryService, DatabaseManagementService databaseManagementService, OrderManagementService orderManagementService)
+        {
             _logger = logger;
             _knowledgeBaseService = knowledgeBaseService;
             _chatBotService = chatBotService;
             _httpClient = new HttpClient();
             _chatBotHistoryService = chatBotHistoryService;
             _databaseManagementService = databaseManagementService;
+            _orderManagementService = orderManagementService;
         }
 
-        public IActionResult Index() {
+        public IActionResult Index()
+        {
             return View();
         }
 
         #region Knowledge Base
 
-        public async Task<IActionResult> KnowledgeBase() {
+        public async Task<IActionResult> KnowledgeBase()
+        {
             var files = await _knowledgeBaseService.GetAllFilesAsync();
             return View(files);
         }
@@ -52,8 +57,7 @@ namespace HeartDisease.Controllers {
                         TempData["SuccessMessage"] = "Chatbot training started successfully.";
                         var lastTrained = DateTime.Now;
                         await _chatBotService.UpdateChatBotLastTrained(1, lastTrained);
-                    }
-                    else
+                    } else
                     {
                         TempData["ErrorMessage"] = "Failed to start chatbot training.";
                     }
@@ -148,12 +152,14 @@ namespace HeartDisease.Controllers {
 
         #region Chat Bot Settings
 
-        public async Task<IActionResult> ChatBotSettings() {
+        public async Task<IActionResult> ChatBotSettings()
+        {
             var (settings, lastTrained) = await _chatBotService.GetChatBotSettingsWithLastTrained(1);
             var models = await _chatBotService.GetAllGPTModels();
             ViewBag.Models = new SelectList(models, "Id", "ModelName");
 
-            var viewModel = new ChatBotSettingsViewModel {
+            var viewModel = new ChatBotSettingsViewModel
+            {
                 Settings = settings,
                 LastTrained = lastTrained
             };
@@ -235,39 +241,49 @@ namespace HeartDisease.Controllers {
         #endregion
 
         #region Machine Learning Models
-        public IActionResult MachineLearningModels() {
+        public IActionResult MachineLearningModels()
+        {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> RetrainModelLR() {
+        public async Task<IActionResult> RetrainModelLR()
+        {
             return await RetrainModel("http://127.0.0.1:5000/retrain_lr", "Logistic Regression");
         }
 
         [HttpPost]
-        public async Task<IActionResult> RetrainModelRF() {
+        public async Task<IActionResult> RetrainModelRF()
+        {
             return await RetrainModel("http://127.0.0.1:5000/retrain_rf", "Random Forest");
         }
 
         [HttpPost]
-        public async Task<IActionResult> RetrainModelTF() {
+        public async Task<IActionResult> RetrainModelTF()
+        {
             return await RetrainModel("http://127.0.0.1:5000/retrain_tf", "TensorFlow");
         }
 
-        private async Task<IActionResult> RetrainModel(string url, string modelName) {
+        private async Task<IActionResult> RetrainModel(string url, string modelName)
+        {
             _logger.LogInformation($"Initiating {modelName} model retraining");
 
-            try {
+            try
+            {
                 var response = await _httpClient.GetAsync(url);
 
-                if (response.IsSuccessStatusCode) {
+                if (response.IsSuccessStatusCode)
+                {
                     _logger.LogInformation($"{modelName} model retrained successfully");
                     return Json(new { message = $"{modelName} model retrained and saved successfully." });
-                } else {
+                } else
+                {
                     _logger.LogError("Error response from Python API: {StatusCode} - {ReasonPhrase}", response.StatusCode, response.ReasonPhrase);
                     return Json(new { message = $"Failed to retrain {modelName} model." });
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 _logger.LogError(ex, $"An error occurred while retraining the {modelName} model.");
                 return Json(new { message = $"An error occurred while retraining the {modelName} model." });
             }
@@ -329,12 +345,12 @@ namespace HeartDisease.Controllers {
         #endregion
 
         #region Order Management
-        public IActionResult OrderManagement()
+        [HttpGet]
+        public async Task<IActionResult> OrderManagement()
         {
-            return View();
+            var orders = await _orderManagementService.GetAllOrdersAsync();
+            return View(orders);
         }
-
-        // MAKE ORDER MANAGEMENT METHODS HERE
 
         #endregion
     }
