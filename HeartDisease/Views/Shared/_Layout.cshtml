@@ -1,5 +1,4 @@
 ﻿<!DOCTYPE html>
-<!-- <a href="c:\users\markl\onedrive\desktop\softdev\ai-ml\1sem\eksamen\vs_solution\software_1st_semester\heartdisease\services\chatbothistoryservice.cs">c:\users\markl\onedrive\desktop\softdev\ai-ml\1sem\eksamen\vs_solution\software_1st_semester\heartdisease\services\chatbothistoryservice.cs</a> -->
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -9,6 +8,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/HeartDisease.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/messagecontainer.css" asp-append-version="true" />
+    @RenderSection("Styles", required: false) <!-- Add this line -->
 </head>
 <body>
     <header>
@@ -21,8 +21,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        @if (User!.Identity!.IsAuthenticated)
-                        {
+                        @if (User!.Identity!.IsAuthenticated) {
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Webshop" asp-action="Index">Webshop</a>
                             </li>
@@ -32,10 +31,9 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Prediction" asp-action="Index">Heart Disease Prediction</a>
                             </li>
-                             <li class="nav-item">
-                                 <a class="nav-link" asp-area="" asp-controller="Chat" asp-action="Index">Heart Doctor</a>
-                             </li>
-                     
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Chat" asp-action="Index">Heart Doctor</a>
+                            </li>
                         }
                     </ul>
                     <partial name="_LoginPartial" />
@@ -46,14 +44,12 @@
 
     <div class="container">
         <div class="message-box-container">
-            @if (TempData["SuccessMessage"] != null)
-            {
+            @if (TempData["SuccessMessage"] != null) {
                 <div class="message success">
                     @TempData["SuccessMessage"]
                 </div>
             }
-            @if (TempData["ErrorMessage"] != null)
-            {
+            @if (TempData["ErrorMessage"] != null) {
                 <div class="message error">
                     @TempData["ErrorMessage"]
                 </div>

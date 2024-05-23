@@ -7,36 +7,125 @@
 
 <h3>@ViewData["Title"]</h3>
 
-<div class="row">
-    <div class="col-md-6">
-
-        @if (Model.Orders.Count == 0) {
-            <p class="text-center">You have no orders.</p>
-        } else {
-            <div class="table-responsive">
-                <table class="table table-hover table-bordered">
-                    <thead class="table-header-custom">
-                        <tr>
-                            <th scope="col">Order ID</th>
-                            <th scope="col">Order Date</th>
-                            <th scope="col">Total Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var order in Model.Orders) {
+<div class="shadow-border p-4 mb-4 border rounded" style="max-width: 800px; margin: auto; margin-left: 0;">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search by Order ID, Date or Amount">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @if (Model.Orders.Count == 0) {
+                <p class="text-center">You have no orders.</p>
+            } else {
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-hover table-bordered">
+                        <thead class="table-header-custom">
                             <tr>
-                                <td>@order.OrderID</td>
-                                <td>@order.OrderDate.ToString("MMMM dd, yyyy")</td>
-                                <td>@order.TotalAmount.ToString("C")</td>
+                                <th scope="col"><button id="sortOrderID" class="btn btn-link p-0">Order ID</button></th>
+                                <th scope="col"><button id="sortOrderDate" class="btn btn-link p-0">Order Date</button></th>
+                                <th scope="col"><button id="sortTotalAmount" class="btn btn-link p-0">Total Amount</button></th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
+                        </thead>
+                        <tbody id="ordersTable">
+                            @foreach (var order in Model.Orders) {
+                                <tr>
+                                    <td>@order.OrderID</td>
+                                    <td>@order.OrderDate.ToString("MMMM dd, yyyy")</td>
+                                    <td>@order.TotalAmount.ToString("C")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchInput = document.getElementById("searchInput");
+            const ordersTable = document.getElementById("ordersTable").getElementsByTagName("tr");
+
+            searchInput.addEventListener("keyup", function () {
+                const filter = searchInput.value.toLowerCase();
+                Array.from(ordersTable).forEach(function (row) {
+                    const orderID = row.cells[0].textContent.toLowerCase();
+                    const orderDate = row.cells[1].textContent.toLowerCase();
+                    const totalAmount = row.cells[2].textContent.toLowerCase();
+                    if (orderID.includes(filter) || orderDate.includes(filter) || totalAmount.includes(filter)) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            });
+
+            // Sorting functionality
+            document.getElementById("sortOrderID").addEventListener("click", function () {
+                sortTable(0);
+            });
+            document.getElementById("sortOrderDate").addEventListener("click", function () {
+                sortTable(1);
+            });
+            document.getElementById("sortTotalAmount").addEventListener("click", function () {
+                sortTable(2);
+            });
+
+            function sortTable(columnIndex) {
+                const rows = Array.from(ordersTable).sort((a, b) => {
+                    const cellA = a.cells[columnIndex].textContent.trim();
+                    const cellB = b.cells[columnIndex].textContent.trim();
+                    return cellA.localeCompare(cellB, undefined, { numeric: true });
+                });
+
+                while (ordersTable.length) {
+                    ordersTable[0].remove();
+                }
+
+                rows.forEach(row => ordersTable.appendChild(row));
+            }
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .shadow-border {
+            border: 1px solid #ddd; /* Small border for containers */
+            border-radius: 0.5rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Shadow effect */
+            background-color: #fff; /* White background */
+            padding: 20px; /* Padding inside the div */
+            max-width: 800px; /* Max width for the container */
+            margin: auto; /* Center the container horizontally */
+            margin-left: 0; /* Align the container to the left */
+        }
+
+        .table-header-custom {
+            background-color: #f8f9fa; /* Light background for table header */
+            font-weight: bold; /* Bold text */
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1; /* Light grey background on hover */
+        }
+
+        .btn-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+            .btn-link:hover {
+                text-decoration: underline;
+            }
+
+        .table-responsive {
+            max-height: 400px; /* Set max-height for scrollable area */
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+    </style>
 }
