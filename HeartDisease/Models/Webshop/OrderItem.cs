@@ -4,8 +4,7 @@
         public int OrderID { get; set; }
         public int ProductID { get; set; }
         public int Quantity { get; set; }
-        public decimal PriceAtTimeOrder { get; set; }
-
+        public decimal PriceAtTimeOfOrder { get; set; }
 
     }
 }
