@@ -47,6 +47,7 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<ReviewService>();
 builder.Services.AddScoped<SideEffectService>();
 builder.Services.AddScoped<ManufacturerService>();
+builder.Services.AddScoped<OrderManagementService>();
 
 
 var app = builder.Build();
