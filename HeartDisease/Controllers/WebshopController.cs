@@ -83,7 +83,7 @@ namespace HeartDisease.Controllers {
 
             return RedirectToAction("Index");
         }
-        #endregion
+
 
         [HttpDelete]
         public async Task<IActionResult> DeleteOrderItem(int orderItemId) {
@@ -98,11 +98,13 @@ namespace HeartDisease.Controllers {
         }
 
 
-
+        // Skal ændres
         [HttpPost]
         public async Task<IActionResult> EmptyCart(int orderId) {
             await _orderService.DeleteOrder(orderId);
             return Ok();
         }
+
+        #endregion
     }
 }
