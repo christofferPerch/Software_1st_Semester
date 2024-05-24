@@ -1,16 +1,42 @@
-﻿@model IEnumerable<HeartDisease.Models.Webshop.Product>
+﻿ @model IEnumerable<HeartDisease.Models.Webshop.Product>
 
 @{
     ViewBag.Title = "Welcome to the PharmaFiesta Funshop";
     int currentPage = ViewBag.CurrentPage ?? 1;
     int totalPages = ViewBag.TotalPages ?? 1;
+    string selectedManufacturers = ViewBag.ManufacturerIds ?? "";
+    int minPrice = ViewBag.MinPrice ?? 0;
+    int maxPrice = ViewBag.MaxPrice ?? 500;
+    string searchTerm = ViewBag.SearchTerm ?? "";
+
 }
 
-<h2 class="text-center">@ViewBag.Title</h2>
 
-<style>
+ <h2 class="text-center">@ViewBag.Title</h2>
+
+<style >
     body {
         background-color: #f8f9fa;
+    }
+
+    .main-container {
+        position: relative;
+        max-width: 1200px;
+        margin-top: 30px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .filter-container {
+        position: absolute;
+        left: -270px;
+        margin-top: 30px;
+        top: 0;
+        width: 250px;
+        padding: 20px;
+        background: #ffffff;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border-radius: 8px;
     }
 
     .product-container {
@@ -28,7 +54,7 @@
         position: relative;
         display: flex;
         flex-direction: column;
-        justify-content: space-between; /* Ensures content is spaced out vertically */
+        justify-content: space-between;
         align-items: center;
         width: 23%;
         height: 400px;
@@ -39,9 +65,8 @@
         text-align: center;
         background: #FDFDFD;
         cursor: pointer;
-        transition: transform 0.7s ease; /* Transition for card zoom effect */
+        transition: transform 0.7s ease;
     }
-
 
         .product-item:hover {
             transform: scale(1.03);
@@ -49,7 +74,7 @@
 
             .product-item:hover .image-container img {
                 transform: scale(1.03);
-                transition: transform 0.7s ease; /* Slower transition for image zoom */
+                transition: transform 0.7s ease;
             }
 
     .image-container {
@@ -80,14 +105,13 @@
             overflow: hidden;
             display: -webkit-box;
             -webkit-box-orient: vertical;
-            -webkit-line-clamp: 3; 
+            -webkit-line-clamp: 3;
             margin: 0;
             padding: 0 5px;
             line-height: 1.4em;
-            max-height: 4.2em; 
-            text-overflow: ellipsis; 
+            max-height: 4.2em;
+            text-overflow: ellipsis;
             box-sizing: border-box;
-
         }
 
         .product-item p.price {
@@ -100,27 +124,25 @@
 
     a.product-item, a.product-item:hover, a.product-item:focus, a.product-item:active {
         color: #000 !important;
-        text-decoration: none; 
+        text-decoration: none;
     }
 
         a.product-item:hover {
-            color: #bb3341 !important; 
-            text-decoration: none !important; 
+            color: #bb3341 !important;
+            text-decoration: none !important;
         }
-
 
     .btn-primary {
         margin-top: 5px;
         padding: 12px 24px;
         font-size: 16px;
-        background-color: #f88379 !important; /* Using !important to ensure override */
-        border-color: #f88379 !important; /* Using !important to ensure override */
-
+        background-color: #f88379 !important;
+        border-color: #f88379 !important;
     }
 
         .btn-primary:hover {
             border-color: #f77369 !important;
-            background-color: #f77369 !important; /* Slightly darker shade for hover, also using !important */
+            background-color: #f77369 !important;
         }
 
     .pagination {
@@ -133,37 +155,304 @@
     .page-info {
         margin: 0 15px;
     }
+
+    .manufacturer-list {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .manufacturer-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 0;
+    }
+
+        .manufacturer-item button {
+            background: none;
+            border: none;
+            color: red;
+            cursor: pointer;
+        }
+
+            .manufacturer-item button:hover {
+                color: darkred;
+            }
+
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 1000;
+    }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-menu li {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+            .dropdown-menu li:hover {
+                background-color: #f8f9fa;
+            }
+
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .btn-filter {
+        padding: 8px 16px;
+        font-size: 14px;
+        width: 48%;
+    }
+
+    .position-relative {
+        position: relative;
+    }
+
+    .position-absolute {
+        position: absolute;
+        z-index: 1000;
+    }
+
+    .w-100 {
+        width: 100%;
+    }
+
+    #manufacturerDropdown {
+        top: 100%;
+        left: 0;
+    }
+
+
+    .icon-button {
+        position: absolute;
+        right: 20%;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 24px;
+        color: #f44336; /* Red color */
+        outline: none; /* Remove outline */
+    }
+
+        .icon-button:hover {
+            color: #bb3341; /* Darker shade of red on hover */
+        }
 </style>
 
 
-<div class="container product-container">
-    @foreach (var product in Model) {
-        <a href="@Url.Action("ProductDetails", "Webshop", new { id = product.ProductID })" class="product-item">
-            <div class="image-container">
-                <img src="@product.ImageURL" alt="Image of @product.ProductName" />
+
+<div class="main-container">
+     <button id="cart-toggle" class="icon-button">
+         <i class="fas fa-shopping-cart"></i>
+     </button>
+     <div class="cart-view" style="display: none;">
+         @await Component.InvokeAsync("ShoppingCart")
+     </div>
+
+
+    <div class="filter-container">
+        <h3>Filter Products</h3>
+        <form id="filterForm" method="get" asp-action="Index" asp-controller="Webshop">
+            <div>
+                <label for="manufacturerSearch">Manufacturer</label>
+                <div class="position-relative">
+                    <input type="text" id="manufacturerSearch" class="form-control" placeholder="Type to search...">
+                    <ul id="manufacturerDropdown" class="dropdown-menu position-absolute w-100"></ul>
+                    <input type="hidden" id="manufacturerIds" name="manufacturerIds" value="@selectedManufacturers">
+                </div>
+                <ul id="manufacturerList" class="manufacturer-list mt-3"></ul>
             </div>
-            <h3>@product.ProductName</h3>
-            <p class="description">@product.Description</p>
-            <p class="price">DKK @product.Price.ToString("N2")</p>
-        </a>
-    }
+            <div style="margin-top: 15px;">
+                <label for="price-range">Price Range</label>
+                <input type="range" id="price-range" name="maxPrice" class="form-control" min="0" max="500" step="10" value="@maxPrice">
+                <div class="d-flex justify-content-between mt-2">
+                    <span>0</span>
+                    <span id="price-range-value">@maxPrice</span>
+                </div>
+            </div>
+            <div class="button-container">
+                <button type="submit" class="btn btn-primary btn-filter">Apply Filters</button>
+                <button type="button" id="resetFilters" class="btn btn-primary btn-filter">Reset Filters</button>
+            </div>
+        </form>
+    </div>
+
+
+
+     <div class="container product-container">
+         @foreach (var product in Model) {
+             <a href="@Url.Action("ProductDetails", "Webshop", new { id = product.ProductID })" class="product-item">
+                 <div class="image-container">
+                     <img src="@product.ImageURL" alt="Image of @product.ProductName" />
+                 </div>
+                 <h3>@product.ProductName</h3>
+                 <p class="description">@product.Description</p>
+                 <p class="price">DKK @product.Price.ToString("N2")</p>
+             </a>
+         }
+     </div>
+
+
+     <div class="pagination">
+         @if (currentPage > 1) {
+             <a href="@Url.Action("Index", "Webshop", new { pageNumber = currentPage - 1, pageSize = ViewBag.PageSize })" class="btn btn-primary">Previous</a>
+         }
+         <span class="page-info">Page @currentPage of @totalPages</span>
+         @if (currentPage < totalPages) {
+             <a href="@Url.Action("Index", "Webshop", new { pageNumber = currentPage + 1, pageSize = ViewBag.PageSize })" class="btn btn-primary">Next</a>
+         }
+     </div>
 </div>
 
-<div class="pagination">
-    @if (currentPage > 1) {
-        <a href="@Url.Action("Index", "Webshop", new { pageNumber = currentPage - 1, pageSize = ViewBag.PageSize })" class="btn btn-primary">Previous</a>
-    }
-    <span class="page-info">Page @currentPage of @totalPages</span>
-    @if (currentPage < totalPages) {
-        <a href="@Url.Action("Index", "Webshop", new { pageNumber = currentPage + 1, pageSize = ViewBag.PageSize })" class="btn btn-primary">Next</a>
-    }
-</div>
 
+<script>
+    $(document).ready(function () {
+        var selectedManufacturers = '@selectedManufacturers'.split(',').filter(Boolean);
+        var manufacturerList = $('#manufacturerList');
 
+        selectedManufacturers.forEach(function (manufacturerId) {
+            $.ajax({
+                url: '/api/Manufacturer/' + manufacturerId,
+                type: 'GET',
+                success: function (manufacturer) {
+                    var listItem = $('<li class="manufacturer-item"></li>');
+                    listItem.text(manufacturer.name);
+                    listItem.append('<button type="button" data-id="' + manufacturerId + '">Remove</button>');
+                    manufacturerList.append(listItem);
 
+                    listItem.find('button').on('click', function () {
+                        listItem.remove();
+                        updateManufacturerIds();
+                    });
+                }
+            });
+        });
 
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        $('#manufacturerSearch').on('input', function () {
+            var searchTerm = $(this).val();
+            if (searchTerm.length > 0) {
+                $.ajax({
+                    url: '/api/Manufacturer/search',
+                    type: 'GET',
+                    data: { term: searchTerm },
+                    success: function (data) {
+                        var dropdown = $('#manufacturerDropdown');
+                        dropdown.empty();
+                        if (data.length > 0) {
+                            data.forEach(function (manufacturer) {
+                                dropdown.append('<li data-id="' + manufacturer.manufacturerID + '">' + manufacturer.name + '</li>');
+                            });
+                            dropdown.addClass('show');
+                        } else {
+                            dropdown.removeClass('show');
+                        }
+                    },
+                    error: function (xhr) {
+                        console.error('Error fetching manufacturers:', xhr.responseText);
+                    }
+                });
+            } else {
+                $('#manufacturerDropdown').removeClass('show');
+            }
+        });
 
+        $('#manufacturerDropdown').on('click', 'li', function () {
+            var manufacturerId = $(this).data('id');
+            var manufacturerName = $(this).text();
+            var listItem = $('<li class="manufacturer-item"></li>');
+            listItem.text(manufacturerName);
+            listItem.append('<button type="button" data-id="' + manufacturerId + '">Remove</button>');
+            manufacturerList.append(listItem);
+            $('#manufacturerDropdown').removeClass('show');
+            $('#manufacturerSearch').val('');
+
+            listItem.find('button').on('click', function () {
+                listItem.remove();
+                updateManufacturerIds();
+            });
+
+            updateManufacturerIds();
+        });
+
+        $('#price-range').on('input', function () {
+            $('#price-range-value').text($(this).val());
+        });
+
+        $('#productSearch').on('input', function () {
+            var searchTerm = $(this).val();
+            if (searchTerm.length > 0) {
+                $.ajax({
+                    url: '/api/Product/search',
+                    type: 'GET',
+                    data: { term: searchTerm },
+                    success: function (data) {
+                        var dropdown = $('#productSearchDropdown');
+                        dropdown.empty();
+                        if (data.length > 0) {
+                            data.forEach(function (product) {
+                                dropdown.append('<li data-id="' + product.productID + '">' + product.productName + '</li>');
+                            });
+                            dropdown.addClass('show');
+                        } else {
+                            dropdown.removeClass('show');
+                        }
+                    },
+                    error: function (xhr) {
+                        console.error('Error fetching products:', xhr.responseText);
+                    }
+                });
+            } else {
+                $('#productSearchDropdown').removeClass('show');
+            }
+        });
+
+        function updateManufacturerIds() {
+            var manufacturerIds = [];
+            $('#manufacturerList .manufacturer-item button').each(function () {
+                manufacturerIds.push($(this).data('id'));
+            });
+            $('#manufacturerIds').val(manufacturerIds.join(','));
+        }
+
+        $('#filterForm').on('submit', function () {
+            updateManufacturerIds();
+        });
+
+        $('#resetFilters').on('click', function () {
+            $('#manufacturerSearch').val('');
+            $('#manufacturerList').empty();
+            $('#price-range').val(500).trigger('input');
+            $('#filterForm').submit();
+        });
+    });
+</script>
+
+<script>
+     $(document).ready(function () {
+         // Check session storage and set the visibility of the cart
+         if (sessionStorage.getItem('cartVisible') === 'true') {
+             $('.cart-view').show();
+         } else {
+             $('.cart-view').hide();
+         }
+
+         $('#cart-toggle').click(function () {
+             $('.cart-view').toggle();
+             // Save the current visibility state of the cart to session storage
+             sessionStorage.setItem('cartVisible', $('.cart-view').is(':visible'));
+         });
+     });
+ </script>

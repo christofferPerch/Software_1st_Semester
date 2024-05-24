@@ -25,5 +25,7 @@ namespace HeartDisease.Services.Webshop {
                         WHERE EntryID = @EntryID";
             await _dataAccess.Update(sql, new { EntryID = entryID, Status = status });
         }
+
+
     }
 }

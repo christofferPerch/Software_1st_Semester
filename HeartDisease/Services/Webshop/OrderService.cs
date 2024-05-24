@@ -32,7 +32,8 @@ namespace HeartDisease.Services.Webshop {
 
         public async Task UpdateOrder(Order order) {
             var sql = @"UPDATE [Order] 
-                        SET OrderDate = @OrderDate, TotalAmount = @TotalAmount 
+                        SET UserId = @UserId, OrderDate = @OrderDate, 
+                            TotalAmount = @TotalAmount
                         WHERE OrderID = @OrderID";
             await _dataAccess.Update(sql, order);
         }
@@ -42,5 +43,31 @@ namespace HeartDisease.Services.Webshop {
             await _dataAccess.Delete(sql, new { OrderID = orderID });
         }
 
+        public async Task<Order?> GetActiveOrderForUser(string userId) {
+            string sql = @"
+                SELECT TOP 1 * FROM [Order]
+                LEFT JOIN OrderHistory ON [Order].OrderID = OrderHistory.OrderID
+                WHERE UserId = @UserId AND OrderHistory.OrderID IS NULL
+                ORDER BY OrderDate DESC";
+            return await _dataAccess.GetById<Order>(sql, new { UserId = userId });
+        }
+
+        // Creates a new order if there isn't an active one
+        public async Task<Order> EnsureActiveOrder(string userId) {
+            var order = await GetActiveOrderForUser(userId);
+            if (order != null) return order;
+
+            order = new Order {
+                UserId = userId,
+                OrderDate = DateTime.UtcNow,
+                TotalAmount = 0m
+            };
+            await InsertOrder(order);
+            return await GetActiveOrderForUser(userId); // Re-fetch to ensure we have the ID
+        }
+
+
+
     }
 }
+

@@ -1,0 +1,241 @@
+﻿@model HeartDisease.ViewModels.ShoppingCartViewModel
+
+
+<head>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+</head>
+
+<style>
+    .shopping-cart-container {
+        position: fixed;
+        width: 350px;
+        max-height: 650px;
+        top: 172px;
+        right: 30px;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        overflow-y: auto;
+        z-index: 1000;
+    }
+
+    .heading {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .cart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+    }
+
+    .cart-items {
+        max-height: 410px;
+        overflow-y: auto;
+        scrollbar-width: none; 
+    }
+
+        .cart-items::-webkit-scrollbar {
+            display: none; 
+        }
+
+    .cart-item {
+        display: flex;
+        padding: 10px;
+        border-bottom: 1px solid #CDCDCD;
+    }
+
+    .cart-item-image {
+        width: 75px;
+        height: 75px;
+        margin-right: 15px;
+        border-radius: 14px;
+    }
+
+    .item-details {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-wrap: break-word; /* Ensure product name wraps */
+    }
+
+        .item-details .name {
+            margin: 0;
+            white-space: normal; /* Allow wrapping */
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .item-details .quantity {
+            margin: 0;
+            font-size: 14px;
+        }
+
+    .price-details {
+        display: flex;
+        align-items: flex-end;
+        flex-direction: column;
+        width: 100px; /* Ensure enough space for the price */
+    }
+
+        .price-details .price {
+            margin: 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+
+    /* TOTAL SECTION */
+    .cart-footer {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .total-section {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .subtotal, .total-price {
+        margin: 0;
+        padding: 0;
+    }
+
+    .subtotal {
+        margin-top: 4px;
+        font-size: 20px;
+    }
+
+    .item-count {
+        font-size: 12px;
+    }
+
+    .total-price {
+        margin-top: 10px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    /* BUTTONS */
+    .btn-delete {
+        align-self: flex-end; 
+        margin-bottom: 10px;
+        font-size: 12px;
+        color: #f44336; /* Red */
+        text-decoration: underline;
+        border: none;
+        background: none;
+        cursor: pointer;
+    }
+
+    .btn-checkout {
+        width: 100%;
+        margin-top: 10px;
+        padding: 8px 0; 
+        font-size: 16px;
+        background-color: #f88379;
+        border-radius: 20px;
+        border: none;
+        color: white;
+        cursor: pointer;
+    }
+
+    .btn-cart:hover, .btn-delete:hover {
+        opacity: 0.8;
+    }
+</style>
+
+
+<script>
+
+    function deleteItem(orderItemID) {
+        var priceText = $('#price-' + orderItemID).text().replace('DKK ', '').replace(',', '').trim(); // Assume price format is "DKK 1,234"
+        var quantityText = $('#quantity-' + orderItemID).text().split('x')[0].trim(); // Assume quantity format is "2 x"
+
+        var itemPrice = parseFloat(priceText);
+        var itemCount = parseInt(quantityText);
+
+        console.log('Deleting item with ID: ' + orderItemID + ', price: ' + itemPrice + ', count: ' + itemCount);
+
+        $.ajax({
+            url: '@Url.Action("DeleteOrderItem", "Webshop")' + '?orderItemID=' + orderItemID,
+            type: 'DELETE',
+            contentType: 'application/json',
+            success: function (result) {
+                if (result.success) {
+                    $('#cart-item-' + orderItemID).remove();
+                    var currentTotalText = $('.total-price').text().replace('DKK ', '').replace(',', '.').trim();
+                    var currentTotal = parseFloat(currentTotalText);
+
+                    if (!isNaN(currentTotal) && !isNaN(itemPrice) && !isNaN(itemCount)) {
+                        var newTotal = currentTotal - (itemPrice * itemCount);
+                        $('.total-price').text('DKK ' + newTotal.toFixed(2));
+                        console.log('New total calculated: DKK ' + newTotal.toFixed(2));
+                    } else {
+                        console.error('Failed to parse prices or quantity correctly.');
+                    }
+                } else {
+                    alert('Error deleting item: ' + result.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX error when attempting to delete item: ' + error);
+                alert('Error deleting item.');
+            }
+        });
+    }
+</script>
+
+
+<div class="shopping-cart-container">
+    <div class="cart-header">
+        <h4 class="heading">Shopping Cart</h4>
+        <button class="btn-delete" onclick="emptyCart(@Model.OrderID)">Empty cart</button>
+    </div>
+    <div class="cart-items">
+        @foreach (var item in Model.Items) {
+            <div class="cart-item" id="cart-item-@item.OrderItemID">
+                <img src="@item.ImageURL" alt="@item.ProductName" class="cart-item-image">
+                <div class="item-details">
+                    <!-- Product name container with wrapping -->
+                    <p class="name">@item.ProductName</p>
+                    <!-- Quantity container -->
+                    <p class="quantity" id="quantity-@item.OrderItemID">@item.Quantity x</p>
+                </div>
+                <div class="price-details">
+                    <!-- Price container -->
+                    <p class="price">DKK @(item.Price * item.Quantity)</p>
+
+                    <button class="btn-delete" onclick="deleteItem('@item.OrderItemID')">Remove</button>
+
+                </div>
+            </div>
+        }
+    </div>
+    <div class="cart-footer">
+        <div class="total-section">
+            <div>
+                <p class="subtotal">Sub-Total</p>
+                <p class="item-count">@Model.Items.Count item@(Model.Items.Count == 1 ? "" : "s")</p>
+            </div>
+            <p class="total-price" id="total-price">DKK @Model.Total.ToString("N2")</p>
+
+        </div>
+        <button class="btn-cart btn-checkout">Checkout</button>
+    </div>
+</div>
+
+

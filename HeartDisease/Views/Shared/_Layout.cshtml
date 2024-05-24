@@ -28,7 +28,8 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        @if (User!.Identity!.IsAuthenticated) {
+                        @if (User!.Identity!.IsAuthenticated)
+                        {
 
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Webshop" asp-action="Index">Webshop</a>
@@ -36,10 +37,10 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Prediction" asp-action="Index">Heart Disease Prediction</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Chat" asp-action="Index">Heart Doctor</a>
-                            </li>
-
+                             <li class="nav-item">
+                                 <a class="nav-link" asp-area="" asp-controller="Chat" asp-action="Index">Heart Doctor</a>
+                             </li>                    
+                     
                         }
                     </ul>
                     <partial name="_LoginPartial" />

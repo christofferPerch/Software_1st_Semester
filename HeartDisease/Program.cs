@@ -47,6 +47,7 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<ReviewService>();
 builder.Services.AddScoped<SideEffectService>();
 builder.Services.AddScoped<ManufacturerService>();
+builder.Services.AddScoped<OrderManagementService>();
 
 
 var app = builder.Build();
@@ -68,7 +69,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Webshop}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 await EnsureRolesAsync(app);
