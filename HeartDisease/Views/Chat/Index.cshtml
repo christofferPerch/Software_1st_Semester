@@ -183,7 +183,7 @@
                 contentType: 'application/json',
                 data: JSON.stringify({ message: message }),
                 success: function (data) {
-                    if (data.response) {
+                    if (data.response) {    
                         var botHtml = '<div class="chat-message bot-message">' +
                             '<img class="heartdoctor" src="' + heartDoctorImagePath + '" alt="Doctor">' +
                             '<div class="message-background message-background-received">' + data.response + '</div></div>';

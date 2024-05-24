@@ -327,5 +327,15 @@ namespace HeartDisease.Controllers {
             return RedirectToAction("DatabaseManagement");
         }
         #endregion
+
+        #region Order Management
+        public IActionResult OrderManagement()
+        {
+            return View();
+        }
+
+        // MAKE ORDER MANAGEMENT METHODS HERE
+
+        #endregion
     }
 }
