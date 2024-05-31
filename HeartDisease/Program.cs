@@ -1,3 +1,4 @@
+using DotNetEnv;
 using HeartDisease.Data;
 using HeartDisease.DataAccess;
 using HeartDisease.Services;
@@ -5,6 +6,8 @@ using HeartDisease.Services.Webshop;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,10 +21,13 @@ builder.Services.AddScoped<IDataAccess, SqlDataAccess>(sp =>
 
 builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection("MongoDB"));
+string mongoUrl = Environment.GetEnvironmentVariable("MONGODB_URL");
 
-builder.Services.AddScoped<IMongoDataAccess, MongoDataAccess>(sp => {
+builder.Services.AddScoped<IMongoDataAccess, MongoDataAccess>(sp =>
+{
     var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
-    return new MongoDataAccess(settings.ConnectionString, settings.DatabaseName);
+    //return new MongoDataAccess(settings.ConnectionString, settings.DatabaseName);
+    return new MongoDataAccess(mongoUrl, settings.DatabaseName);
 });
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
@@ -52,9 +58,11 @@ builder.Services.AddScoped<OrderManagementService>();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment()) {
+if (app.Environment.IsDevelopment())
+{
     app.UseMigrationsEndPoint();
-} else {
+} else
+{
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
@@ -77,23 +85,27 @@ await EnsureUsersAsync(app);
 
 app.Run();
 
-async Task EnsureRolesAsync(WebApplication app) {
+async Task EnsureRolesAsync(WebApplication app)
+{
     using var scope = app.Services.CreateScope();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var roles = new[] { "Admin", "User" };
-    foreach (var role in roles) {
+    foreach (var role in roles)
+    {
         if (!await roleManager.RoleExistsAsync(role))
             await roleManager.CreateAsync(new IdentityRole(role));
     }
 }
 
-async Task EnsureUsersAsync(WebApplication app) {
+async Task EnsureUsersAsync(WebApplication app)
+{
     using var scope = app.Services.CreateScope();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
     string email = "admin@admin.com";
     string password = "Admin.123";
     var user = await userManager.FindByEmailAsync(email);
-    if (user == null) {
+    if (user == null)
+    {
         user = new IdentityUser { UserName = email, Email = email };
         await userManager.CreateAsync(user, password);
         await userManager.AddToRoleAsync(user, "Admin");
