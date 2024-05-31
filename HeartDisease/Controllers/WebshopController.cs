@@ -1,5 +1,7 @@
 ﻿using System.Security.Claims;
+using HeartDisease.Models.Webshop;
 using HeartDisease.Services.Webshop;
+using HeartDisease.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -89,14 +91,32 @@ namespace HeartDisease.Controllers {
         }
 
 
-        public async Task<IActionResult> ProductDetails(int id) {
-            try {
+        public async Task<IActionResult> ProductDetails(int id)
+        {
+            try
+            {
                 var product = await _productService.GetProductByIdAsync(id);
-                if (product == null) {
+                if (product == null)
+                {
                     return NotFound();
                 }
-                return View(product);
-            } catch (Exception ex) {
+
+                var manufacturer = await _manufacturerService.GetManufacturerByProductIdAsync(id);
+                var sideEffect = await _sideEffectService.GetSideEffectByProductID(id);
+                var review = await _reviewService.GetReviewByProductID(id);
+
+                var model = new ProductDetailsViewModel
+                {
+                    Product = product,
+                    ManufacturerName = manufacturer?.Name, // Assuming Manufacturer class has a Name property
+                    SideEffects = sideEffect?.Effect, // Assuming SideEffect class has an Effect property
+                    Review = review
+                };
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
                 _logger.LogError("Failed to load product details: {Exception}", ex);
                 return View("Error");
             }

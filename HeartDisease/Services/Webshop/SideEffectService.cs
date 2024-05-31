@@ -9,9 +9,10 @@ namespace HeartDisease.Services.Webshop {
             _dataAccess = dataAccess ?? throw new ArgumentNullException(nameof(dataAccess));
         }
 
-        public async Task<SideEffect?> GetSideEffectByProductID(int productID) {
-            string sql = $"SELECT * FROM SideEffect WHERE ProductID = @ProductID";
+public async Task<SideEffect?> GetSideEffectByProductID(int productID) {
+            string sql = "SELECT * FROM SideEffect WHERE ProductID = @ProductID";
             return await _dataAccess.GetById<SideEffect>(sql, new { ProductID = productID });
         }
+
     }
 }

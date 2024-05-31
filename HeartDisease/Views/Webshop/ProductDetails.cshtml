@@ -1,10 +1,10 @@
-﻿@model HeartDisease.Models.Webshop.Product
+﻿@model HeartDisease.ViewModels.ProductDetailsViewModel
 
 @{
-    ViewBag.Title = "Product Details";  // Don't need it
+    ViewBag.Title = "Product Details";
 }
 
-<h2 class="text-center mt-4">@Model.ProductName</h2>
+<h2 class="text-center mt-4">@Model.Product.ProductName</h2>
 
 <head>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -26,7 +26,7 @@
     .card {
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         border-radius: 8px;
-        position: relative; /* Make the card position relative for absolute positioning of the icon */
+        position: relative;
     }
 
     .img-container {
@@ -74,8 +74,8 @@
     }
 
         .btn-back:hover {
-            color: #444; /* Darker text on hover */
-            background-color: #f0f0f0; /* Slight background on hover */
+            color: #444;
+            background-color: #f0f0f0;
         }
 
     .btn-primary, .btn-back {
@@ -112,12 +112,12 @@
         border: none;
         cursor: pointer;
         font-size: 24px;
-        color: #f44336; /* Red color */
-        outline: none; /* Remove outline */
+        color: #f44336;
+        outline: none;
     }
 
         .icon-button:hover {
-            color: #bb3341; /* Darker shade of red on hover */
+            color: #bb3341;
         }
 
 </style>
@@ -133,24 +133,34 @@
         <div class="row no-gutters">
             <div class="col-md-6">
                 <div class="img-container">
-                    <img src="@Model.ImageURL" alt="Image of @Model.ProductName" class="img-fluid rounded" />
+                    <img src="@Model.Product.ImageURL" alt="Image of @Model.Product.ProductName" class="img-fluid rounded" />
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="card-body">
                     <div class="details-section">
                         <h3>Description</h3>
-                        <p>@Model.Description</p>
+                        <p>@Model.Product.Description</p>
                     </div>
                     <div class="details-section">
-                        <p><strong>Generic Name:</strong> @Model.GenericName</p>
+                        <p><strong>Generic Name:</strong> @Model.Product.GenericName</p>
                     </div>
                     <div class="details-section">
-                        <p><strong>Manufacturer:</strong> Placeholder for Manufacturer Name</p>
+                        <p><strong>Manufacturer:</strong> @Model.ManufacturerName</p>
                     </div>
-                    <p class="price-bottom-left">DKK @Model.Price.ToString("N2")</p>
+                    <div class="details-section">
+                        <h4>Side Effects</h4>
+                        <p>@Model.SideEffects</p>
+                    </div>
+                    <div class="details-section">
+                        <h4>Review</h4>
+                        <p>Excellent Review Percent: @Model.Review.ExcellentReviewPercent%</p>
+                        <p>Average Review Percent: @Model.Review.AverageReviewPercent%</p>
+                        <p>Poor Review Percent: @Model.Review.PoorReviewPercent%</p>
+                    </div>
+                    <p class="price-bottom-left">DKK @Model.Product.Price.ToString("N2")</p>
                     <form asp-controller="Webshop" asp-action="AddToCart" method="post">
-                        <input type="hidden" name="productId" value="@Model.ProductID" />
+                        <input type="hidden" name="productId" value="@Model.Product.ProductID" />
                         <label for="quantity">Quantity:</label>
                         <input type="number" name="quantity" id="quantity" value="1" min="1" max="10" class="form-control" style="width: auto;" />
                         <div class="button-group">
@@ -158,17 +168,14 @@
                             <button type="submit" class="btn btn-primary">Add to Cart</button>
                         </div>
                     </form>
-
-                  </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-
 <script>
     $(document).ready(function () {
-        // Check session storage and set the visibility of the cart
         if (sessionStorage.getItem('cartVisible') === 'true') {
             $('.cart-view').show();
         } else {
@@ -177,7 +184,6 @@
 
         $('#cart-toggle').click(function () {
             $('.cart-view').toggle();
-            // Save the current visibility state of the cart to session storage
             sessionStorage.setItem('cartVisible', $('.cart-view').is(':visible'));
         });
     });

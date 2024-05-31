@@ -18,5 +18,15 @@ namespace HeartDisease.Services.Webshop {
             string sql = $"SELECT * FROM Manufacturer WHERE ManufacturerID = @ManufacturerID";
             return await _dataAccess.GetById<Manufacturer>(sql, new { ManufacturerID = manufacturerID });
         }
+
+        public async Task<Manufacturer?> GetManufacturerByProductIdAsync(int productId)
+        {
+            string sql = @"
+                SELECT m.* 
+                FROM Manufacturer m
+                INNER JOIN Product p ON m.ManufacturerID = p.ManufacturerID
+                WHERE p.ProductID = @ProductID";
+            return await _dataAccess.GetById<Manufacturer>(sql, new { ProductID = productId });
+        }
     }
 }
