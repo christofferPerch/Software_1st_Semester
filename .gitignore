@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /HeartDisease_Python/env_python
 /HeartDisease.Python/env
+
+.env
