@@ -365,3 +365,4 @@ FodyWeavers.xsd
 /HeartDisease.Python/env
 
 .env
+/HeartDisease/.env
