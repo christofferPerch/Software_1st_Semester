@@ -154,9 +154,9 @@
                     </div>
                     <div class="details-section">
                         <h4>Review</h4>
-                        <p>Excellent Review Percent: @Model.Review.ExcellentReviewPercent%</p>
-                        <p>Average Review Percent: @Model.Review.AverageReviewPercent%</p>
-                        <p>Poor Review Percent: @Model.Review.PoorReviewPercent%</p>
+                        <p>Excellent Reviews: @Model.Review.ExcellentReviewPercent%</p>
+                        <p>Average Reviews: @Model.Review.AverageReviewPercent%</p>
+                        <p>Poor Reviews: @Model.Review.PoorReviewPercent%</p>
                     </div>
                     <p class="price-bottom-left">DKK @Model.Product.Price.ToString("N2")</p>
                     <form asp-controller="Webshop" asp-action="AddToCart" method="post">
