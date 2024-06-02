@@ -81,7 +81,7 @@ namespace HeartDisease.DataAccess {
             }
 
             var fileStream = await _gridFS.OpenDownloadStreamAsync(fileId);
-            return (fileStream, fileInfo.Filename); // Make sure to return both stream and filename as a tuple
+            return (fileStream, fileInfo.Filename);
         }
 
     }
