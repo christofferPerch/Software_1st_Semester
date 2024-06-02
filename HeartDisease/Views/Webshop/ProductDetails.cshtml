@@ -104,31 +104,10 @@
         color: #333;
     }
 
-    .icon-button {
-        position: absolute;
-        top: 10px;
-        right: 15%;
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 24px;
-        color: #f44336;
-        outline: none;
-    }
-
-        .icon-button:hover {
-            color: #bb3341;
-        }
 
 </style>
 
 <div class="container">
-    <button id="cart-toggle" class="icon-button">
-        <i class="fas fa-shopping-cart"></i>
-    </button>
-    <div class="cart-view" style="display: none;">
-        @await Component.InvokeAsync("ShoppingCart")
-    </div>
     <div class="card">
         <div class="row no-gutters">
             <div class="col-md-6">
