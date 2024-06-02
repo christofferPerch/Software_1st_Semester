@@ -152,18 +152,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    $(document).ready(function () {
-        if (sessionStorage.getItem('cartVisible') === 'true') {
-            $('.cart-view').show();
-        } else {
-            $('.cart-view').hide();
-        }
-
-        $('#cart-toggle').click(function () {
-            $('.cart-view').toggle();
-            sessionStorage.setItem('cartVisible', $('.cart-view').is(':visible'));
-        });
-    });
-</script>
