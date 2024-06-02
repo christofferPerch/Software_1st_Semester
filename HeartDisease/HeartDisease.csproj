@@ -31,10 +31,6 @@
     <ProjectReference Include="..\HeartDisease.DataAccess\HeartDisease.DataAccess.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Documentation\MongoDB\" />
-  </ItemGroup>
-
   <ProjectExtensions><VisualStudio><UserProperties wwwroot_4lib_4bootstrap_4dist_4js_4bootstrap_1bundle_1js_1map__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>
